@@ -30,7 +30,7 @@ function ciniki_artgallery_exhibitionImageAdd(&$ciniki) {
     $args = $rc['args'];
 
 	if( !isset($args['permalink']) || $args['permalink'] == '' ) {
-		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 ]/', '', strtolower($args['name'])));
+		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['name'])));
 	}
 
 	if( $args['exhibition_id'] <= 0 ) {
@@ -57,7 +57,7 @@ function ciniki_artgallery_exhibitionImageAdd(&$ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbInsert');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
-	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.argallery');
+	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.artgallery');
 	if( $rc['stat'] != 'ok' ) { 
 		return $rc;
 	}   

@@ -50,7 +50,7 @@ function ciniki_artgallery_exhibitionLinkAdd(&$ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbInsert');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
-	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.argallery');
+	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.artgallery');
 	if( $rc['stat'] != 'ok' ) { 
 		return $rc;
 	}   
