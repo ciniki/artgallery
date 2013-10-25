@@ -63,21 +63,6 @@ function ciniki_artgallery_exhibitionAdd(&$ciniki) {
     }   
 	$modules = $rc['modules'];
 
-	//  
-	// Turn off autocommit
-	//  
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionStart');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionRollback');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbInsert');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
-	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.artgallery');
-	if( $rc['stat'] != 'ok' ) { 
-		return $rc;
-	}   
-
 	//
 	// Check the permalink doesn't already exist
 	//
@@ -94,88 +79,9 @@ function ciniki_artgallery_exhibitionAdd(&$ciniki) {
 	}
 
 	//
-	// Get a new UUID
+	// Add the exhibition
 	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
-	$rc = ciniki_core_dbUUID($ciniki, 'ciniki.artgallery');
-	if( $rc['stat'] != 'ok' ) {
-		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
-		return $rc;
-	}
-	$args['uuid'] = $rc['uuid'];
-
-	//
-	// Add the exhibition to the database
-	//
-	$strsql = "INSERT INTO ciniki_artgallery_exhibitions (uuid, business_id, "
-		. "name, permalink, webflags, start_date, end_date, primary_image_id, "
-		. "location, short_description, long_description, "
-		. "date_added, last_updated) VALUES ("
-		. "'" . ciniki_core_dbQuote($ciniki, $args['uuid']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['name']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['webflags']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['end_date']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['primary_image_id']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['location']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['short_description']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['long_description']) . "', "
-		. "UTC_TIMESTAMP(), UTC_TIMESTAMP())"
-		. "";
-	$rc = ciniki_core_dbInsert($ciniki, $strsql, 'ciniki.artgallery');
-	if( $rc['stat'] != 'ok' ) { 
-		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
-		return $rc;
-	}
-	if( !isset($rc['insert_id']) || $rc['insert_id'] < 1 ) {
-		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1129', 'msg'=>'Unable to add exhibition'));
-	}
-	$exhibition_id = $rc['insert_id'];
-
-	//
-	// Add all the fields to the change log
-	//
-	$changelog_fields = array(
-		'uuid',
-		'name',
-		'permalink',
-		'webflags',
-		'start_date',
-		'end_date',
-		'location',
-		'primary_image_id',
-		'short_description',
-		'long_description',
-		);
-	foreach($changelog_fields as $field) {
-		if( isset($args[$field]) ) {
-			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.artgallery', 
-				'ciniki_artgallery_history', $args['business_id'], 
-				1, 'ciniki_artgallery_exhibitions', $exhibition_id, $field, $args[$field]);
-		}
-	}
-
-	//
-	// Commit the database changes
-	//
-    $rc = ciniki_core_dbTransactionCommit($ciniki, 'ciniki.artgallery');
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
-
-	//
-	// Update the last_change date in the business modules
-	// Ignore the result, as we don't want to stop user updates if this fails.
-	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'artgallery');
-
-	$ciniki['syncqueue'][] = array('push'=>'ciniki.artgallery.exhibition', 
-		'args'=>array('id'=>$exhibition_id));
-
-	return array('stat'=>'ok', 'id'=>$exhibition_id);
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
+	return ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition', $args);
 }
 ?>

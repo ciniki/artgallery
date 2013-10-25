@@ -1,0 +1,5 @@
+#
+# Add the column to store the sequence order for images
+#
+ALTER TABLE ciniki_artgallery_exhibition_images ADD COLUMN sequence int unsigned not null AFTER webflags;
+ALTER TABLE ciniki_artgallery_exhibition_images COMMENT='v1.02';

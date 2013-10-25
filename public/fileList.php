@@ -7,9 +7,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:		The ID of the business to get events for.
-// type:			The type of participants to get.  Refer to participantAdd for 
-//					more information on types.
+// business_id:		The ID of the business to get files for.
 //
 // Returns
 // -------
