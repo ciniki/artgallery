@@ -17,6 +17,7 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
 		. "ciniki_artgallery_exhibitions.permalink, "
 		. "DATE_FORMAT(start_date, '%b %c, %Y') AS start_date, "
 		. "DATE_FORMAT(end_date, '%b %c, %Y') AS end_date, "
+		. "ciniki_artgallery_exhibitions.short_description, "
 		. "ciniki_artgallery_exhibitions.long_description, "
 		. "ciniki_artgallery_exhibitions.primary_image_id, "
 		. "ciniki_artgallery_exhibition_images.image_id, "
@@ -42,7 +43,7 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
 				'description'=>'long_description')),
 		array('container'=>'images', 'fname'=>'image_id', 
 			'fields'=>array('image_id', 'title'=>'image_name', 'permalink'=>'image_permalink',
-				'description'=>'image_description', 'url'=>'image_url',
+				'description'=>'image_description', 'short_description', 'url'=>'image_url',
 				'last_updated'=>'image_last_updated')),
 		));
 	if( $rc['stat'] != 'ok' ) {
@@ -59,7 +60,7 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
 	$strsql = "SELECT id, name, url "
 		. "FROM ciniki_artgallery_exhibition_links "
 		. "WHERE ciniki_artgallery_exhibition_links.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-		. "AND ciniki_artgallery_exhibition_links.id = '" . ciniki_core_dbQuote($ciniki, $exhibition['id']) . "' "
+		. "AND ciniki_artgallery_exhibition_links.exhibition_id = '" . ciniki_core_dbQuote($ciniki, $exhibition['id']) . "' "
 		. "";
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.artgallery', array(

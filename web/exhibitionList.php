@@ -24,19 +24,27 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $business_id, 
 		. "DATE_FORMAT(end_date, '%b %c, %Y') AS end_date, "
 		. "ciniki_artgallery_exhibitions.permalink, "
 		. "ciniki_artgallery_exhibitions.short_description, "
-		. "ciniki_artgallery_exhibitions.primary_image_id "
+		. "ciniki_artgallery_exhibitions.long_description, "
+		. "ciniki_artgallery_exhibitions.primary_image_id, "
+		. "COUNT(ciniki_artgallery_exhibition_images.id) AS num_images "
 		. "FROM ciniki_artgallery_exhibitions "
+		. "LEFT JOIN ciniki_artgallery_exhibition_images ON (ciniki_artgallery_exhibitions.id = ciniki_artgallery_exhibition_images.exhibition_id "
+			. "AND ciniki_artgallery_exhibition_images.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. ") "
 		. "WHERE ciniki_artgallery_exhibitions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		// Check the exhibition is visible on the website
-		. "AND (ciniki_artgallery_exhibitions.webflags&0x01) = 0 ";
+		. "AND (ciniki_artgallery_exhibitions.webflags&0x01) = 0 "
+		. "";
 	if( $type == 'past' ) {
 		$strsql .= "AND ((ciniki_artgallery_exhibitions.end_date > ciniki_artgallery_exhibitions.start_date AND ciniki_artgallery_exhibitions.end_date < DATE(NOW())) "
 				. "OR (ciniki_artgallery_exhibitions.end_date < ciniki_artgallery_exhibitions.start_date AND ciniki_artgallery_exhibitions.start_date <= DATE(NOW())) "
 				. ") "
+			. "GROUP BY ciniki_artgallery_exhibitions.id "
 			. "ORDER BY ciniki_artgallery_exhibitions.start_date DESC, name "
 			. "";
 	} else {
 		$strsql .= "AND (ciniki_artgallery_exhibitions.end_date >= DATE(NOW()) OR ciniki_artgallery_exhibitions.start_date >= DATE(NOW())) "
+			. "GROUP BY ciniki_artgallery_exhibitions.id "
 			. "ORDER BY ciniki_artgallery_exhibitions.start_date ASC, name "
 			. "";
 	}
@@ -50,7 +58,7 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $business_id, 
 			'fields'=>array('id', 'name', 'location', 'image_id'=>'primary_image_id', 
 				'start_date', 'start_month', 'start_day', 'start_year', 
 				'end_date', 'end_month', 'end_day', 'end_year', 
-				'permalink', 'description'=>'short_description')),
+				'permalink', 'description'=>'short_description', 'long_description', 'num_images')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
