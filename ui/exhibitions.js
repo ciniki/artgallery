@@ -186,7 +186,7 @@ function ciniki_artgallery_exhibitions() {
 			'_short_description':{'label':'Brief Description', 'fields':{
 				'short_description':{'label':'', 'hidelabel':'yes', 'size':'small', 'type':'textarea'},
 				}},
-			'_long_description':{'label':'Bio', 'fields':{
+			'_long_description':{'label':'Full Description', 'fields':{
 				'long_description':{'label':'', 'hidelabel':'yes', 'type':'textarea'},
 				}},
 			'_buttons':{'label':'', 'buttons':{

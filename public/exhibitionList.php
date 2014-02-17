@@ -51,7 +51,6 @@ function ciniki_artgallery_exhibitionList($ciniki) {
 		. "ciniki_artgallery_exhibitions.permalink "
 		. "FROM ciniki_artgallery_exhibitions "
 		. "WHERE ciniki_artgallery_exhibitions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND (webflags&0x01) = 0 "	// Visible on the website
 		. "ORDER BY ciniki_artgallery_exhibitions.start_date DESC, name";
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
