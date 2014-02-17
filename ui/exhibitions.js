@@ -10,8 +10,10 @@ function ciniki_artgallery_exhibitions() {
 		this.menu = new M.panel('Exhibitions',
 			'ciniki_artgallery_exhibitions', 'menu',
 			'mc', 'medium', 'sectioned', 'ciniki.artgallery.exhibitions.menu');
+		this.menu.year = 0;
 		this.menu.data = {};
 		this.menu.sections = {
+			'years':{'label':'', 'type':'paneltabs', 'selected':'', 'tabs':{}},
 			'_':{'label':'', 'type':'simplegrid', 'num_cols':1,
 				'headerValues':null,
 				'cellClasses':['multiline'],
@@ -26,7 +28,8 @@ function ciniki_artgallery_exhibitions() {
 			if( d.exhibition.location != '' ) {
 				location = ' <span class="subdue">' + d.exhibition.location + '</span>';
 			}
-			return '<span class="maintext">' + d.exhibition.name + location + '</span><span class="subtext">' + d.exhibition.start_date + ' - ' + d.exhibition.end_date + '</span>';
+			return '<span class="maintext">' + d.exhibition.name + location + '</span>'
+				+ '<span class="subtext">' + d.exhibition.start_date + ' - ' + d.exhibition.end_date + '</span>';
 		};
 		this.menu.rowFn = function(s, i, d) { 
 			return 'M.ciniki_artgallery_exhibitions.showExhibition(\'M.ciniki_artgallery_exhibitions.showMenu();\',\'' + d.exhibition.id + '\');'; 
@@ -231,15 +234,32 @@ function ciniki_artgallery_exhibitions() {
 		this.showMenu(cb);
 	}
 
-	this.showMenu = function(cb) {
+	this.showMenu = function(cb, year) {
+		if( year != null ) { this.menu.year = year; }
 		// Get the list of existing artgallery
 		var rsp = M.api.getJSONCb('ciniki.artgallery.exhibitionList', 
-			{'business_id':M.curBusinessID}, function(rsp) {
+			{'business_id':M.curBusinessID, 'year':this.menu.year, 'years':'yes'}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;
 				}
 				var p = M.ciniki_artgallery_exhibitions.menu;
+				p.sections.years.tabs = {};
+				if( rsp.years != null && rsp.years != '' ) {
+					years = rsp.years.split(',');
+					if( years.length > 1 ) {
+						if( rsp.year != null && rsp.year != '' ){
+							p.year = rsp.year;
+							p.sections.years.selected = rsp.year;
+						}
+						for(i in years) {
+							p.sections.years.tabs[years[i]] = {'label':years[i], 'fn':'M.ciniki_artgallery_exhibitions.showMenu(null,' + years[i] + ');'};
+						}
+						p.sections.years.visible = 'yes';
+					} else {
+						p.sections.years.visible = 'no';
+					}
+				}
 				p.data = rsp.exhibitions;
 				p.refresh();
 				p.show(cb);
