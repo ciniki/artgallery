@@ -51,7 +51,7 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
 		return $rc;
 	}
 	if( !isset($rc['file']) ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1095', 'msg'=>'Unable to find existing item'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1789', 'msg'=>'Unable to find existing item'));
 	}
 	$exhibition_uuid = $rc['file']['uuid'];
 
