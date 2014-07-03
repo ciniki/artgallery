@@ -194,6 +194,7 @@ function ciniki_artgallery_exhibitions() {
 				}},
 			'_buttons':{'label':'', 'buttons':{
 				'save':{'label':'Save', 'fn':'M.ciniki_artgallery_exhibitions.saveExhibition();'},
+				'delete':{'label':'Delete', 'fn':'M.ciniki_artgallery_exhibitions.deleteExhibition();'},
 				}},
 		};
 		this.edit.fieldValue = function(s, i, d) {
@@ -352,6 +353,19 @@ function ciniki_artgallery_exhibitions() {
 						return false;
 					} 
 					M.ciniki_artgallery_exhibitions.edit.close();
+				});
+		}
+	};
+
+	this.deleteExhibition = function() {
+		if( confirm("Are you sure you want to remove this exhibition and all images and links?") ) {
+			var rsp = M.api.getJSONCb('ciniki.artgallery.exhibitionDelete', 
+				{'business_id':M.curBusinessID, 'exhibition_id':M.ciniki_artgallery_exhibitions.edit.exhibition_id}, function(rsp) {
+					if( rsp.stat != 'ok' ) {
+						M.api.err(rsp);
+						return false;
+					}
+					M.ciniki_artgallery_exhibitions.exhibition.close();
 				});
 		}
 	};
