@@ -17,6 +17,12 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
 		. "ciniki_artgallery_exhibitions.permalink, "
 		. "DATE_FORMAT(start_date, '%b %c, %Y') AS start_date, "
 		. "DATE_FORMAT(end_date, '%b %c, %Y') AS end_date, "
+		. "DATE_FORMAT(start_date, '%M') AS start_month, "
+		. "DATE_FORMAT(start_date, '%D') AS start_day, "
+		. "DATE_FORMAT(start_date, '%Y') AS start_year, "
+		. "IF(end_date = '0000-00-00', '', DATE_FORMAT(end_date, '%M')) AS end_month, "
+		. "IF(end_date = '0000-00-00', '', DATE_FORMAT(end_date, '%D')) AS end_day, "
+		. "IF(end_date = '0000-00-00', '', DATE_FORMAT(end_date, '%Y')) AS end_year, "
 		. "ciniki_artgallery_exhibitions.short_description, "
 		. "ciniki_artgallery_exhibitions.long_description, "
 		. "ciniki_artgallery_exhibitions.primary_image_id, "
@@ -40,6 +46,7 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.artgallery', array(
 		array('container'=>'exhibitions', 'fname'=>'id', 
 			'fields'=>array('id', 'name', 'location', 'permalink', 'image_id'=>'primary_image_id', 
+				'start_month', 'start_day', 'start_year', 'end_month', 'end_day', 'end_year',
 				'description'=>'long_description')),
 		array('container'=>'images', 'fname'=>'image_id', 
 			'fields'=>array('image_id', 'title'=>'image_name', 'permalink'=>'image_permalink',
