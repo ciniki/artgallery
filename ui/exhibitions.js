@@ -49,7 +49,7 @@ function ciniki_artgallery_exhibitions() {
 			'_image':{'label':'', 'aside':'yes', 'fields':{
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'history':'no'},
 				}},
-			'info':{'label':'', 'list':{
+			'info':{'label':'', 'aside':'yes', 'list':{
 				'name':{'label':'Name'},
 				'start_date':{'label':'Start'},
 				'end_date':{'label':'End'},
@@ -57,7 +57,7 @@ function ciniki_artgallery_exhibitions() {
 				}},
 			'short_description':{'label':'Brief Description', 'type':'htmlcontent'},
 			'long_description':{'label':'Full Description', 'type':'htmlcontent'},
-			'links':{'label':'Links', 'type':'simplegrid', 'num_cols':1,
+			'links':{'label':'Links', 'aside':'yes', 'type':'simplegrid', 'num_cols':1,
 				'headerValues':null,
 				'cellClasses':['multiline'],
 				'noData':'No links added',
@@ -179,7 +179,7 @@ function ciniki_artgallery_exhibitions() {
 			'_image':{'label':'', 'aside':'yes', 'fields':{
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'controls':'all', 'history':'no'},
 			}},
-			'info':{'label':'', 'fields':{
+			'info':{'label':'', 'aside':'yes', 'fields':{
 				'name':{'label':'Name', 'type':'text'},
 				'start_date':{'label':'Start', 'type':'date'},
 				'end_date':{'label':'End', 'type':'date'},
