@@ -107,7 +107,7 @@ function ciniki_artgallery_exhibitions() {
 						return '<img width="75px" height="75px" src=\'' + M.api.getBinaryURL('ciniki.artgallery.getImage', {'business_id':M.curBusinessID, 'image_id':d.image.image_id, 'version':'thumbnail', 'maxwidth':'75'}) + '\' />'; 
 					}
 				} else {
-					return '<img width="75px" height="75px" src=\'/ciniki-manage-themes/default/img/noimage_75.jpg\' />';
+					return '<img width="75px" height="75px" src=\'/ciniki-mods/core/ui/themes/default/img/noimage_75.jpg\' />';
 				}
 			}
 			if( s == 'images' && j == 1 ) { 
@@ -126,7 +126,7 @@ function ciniki_artgallery_exhibitions() {
 			if( d.image.image_data != null && d.image.image_data != '' ) {
 				return d.image.image_data;
 			} else {
-				return '/ciniki-manage-themes/default/img/noimage_75.jpg';
+				return '/ciniki-mods/core/ui/themes/default/img/noimage_75.jpg';
 			}
 		};
 		this.exhibition.thumbTitle = function(s, i, d) {
