@@ -36,10 +36,6 @@ function ciniki_artgallery_exhibitionUpdate(&$ciniki) {
     }   
     $args = $rc['args'];
 
-	if( isset($args['name']) && (!isset($args['permalink']) || $args['permalink'] == '') ) {
-		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 ]/', '', strtolower($args['name'])));
-	}
-
     //  
     // Make sure this module is activated, and
     // check permission to run this function for this business
@@ -49,6 +45,17 @@ function ciniki_artgallery_exhibitionUpdate(&$ciniki) {
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }
+	
+//	if( isset($args['name']) && (!isset($args['permalink']) || $args['permalink'] == '') ) {
+//		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 ]/', '', strtolower($args['name'])));
+//	}
+
+	if( isset($args['name']) && (!isset($args['permalink']) || $args['permalink'] == '') ) {
+		error_log('permalink');
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
+		$args['permalink'] = ciniki_core_makePermalink($ciniki, $args['name']);
+		error_log($args['permalink']);
+	}
 
 	//
 	// Check the permalink doesn't already exist
