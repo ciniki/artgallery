@@ -51,10 +51,8 @@ function ciniki_artgallery_exhibitionUpdate(&$ciniki) {
 //	}
 
 	if( isset($args['name']) && (!isset($args['permalink']) || $args['permalink'] == '') ) {
-		error_log('permalink');
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
 		$args['permalink'] = ciniki_core_makePermalink($ciniki, $args['name']);
-		error_log($args['permalink']);
 	}
 
 	//
