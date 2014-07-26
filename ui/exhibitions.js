@@ -57,7 +57,7 @@ function ciniki_artgallery_exhibitions() {
 				}},
 			'short_description':{'label':'Brief Description', 'type':'htmlcontent'},
 			'long_description':{'label':'Full Description', 'type':'htmlcontent'},
-			'links':{'label':'Links', 'aside':'yes', 'type':'simplegrid', 'num_cols':1,
+			'links':{'label':'Links', 'type':'simplegrid', 'num_cols':1,
 				'headerValues':null,
 				'cellClasses':['multiline'],
 				'noData':'No links added',
@@ -77,7 +77,7 @@ function ciniki_artgallery_exhibitions() {
 		this.exhibition.sectionData = function(s) {
 			if( s == 'images' ) { return this.data.images; }
 			if( s == 'links' ) { return this.data.links; }
-			if( s == 'short_description' || s == 'long_description' ) { return this.data[s]; }
+			if( s == 'short_description' || s == 'long_description' ) { return this.data[s].replace(/\n/g, '<br/>'); }
 			return this.sections[s].list;
 			};
 		this.exhibition.listLabel = function(s, i, d) {
