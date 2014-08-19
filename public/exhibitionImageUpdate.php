@@ -54,9 +54,9 @@ function ciniki_artgallery_exhibitionImageUpdate(&$ciniki) {
 	if( isset($args['name']) ) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
 		if( $args['name'] != '' ) {	
-			$args['permalink'] = ciniki_core_makePermalink($args['name']);
+			$args['permalink'] = ciniki_core_makePermalink($ciniki, $args['name']);
 		} else {
-			$args['permalink'] = ciniki_core_makePermalink($item['uuid']);
+			$args['permalink'] = ciniki_core_makePermalink($ciniki, $item['uuid']);
 		}
 		//
 		// Make sure the permalink is unique
