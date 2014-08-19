@@ -52,10 +52,11 @@ function ciniki_artgallery_exhibitionImageAdd(&$ciniki) {
 	$args['uuid'] = $rc['uuid'];
 
 	if( !isset($args['permalink']) || $args['permalink'] == '' ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
 		if( isset($args['name']) && $args['name'] != '' ) {
-			$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['name'])));
+			$args['permalink'] = ciniki_core_makePermalink($ciniki, $args['name']);
 		} else {
-			$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['uuid'])));
+			$args['permalink'] = ciniki_core_makePermalink($ciniki, $args['uuid']);
 		}
 	}
 
