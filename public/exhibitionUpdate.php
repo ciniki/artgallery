@@ -30,6 +30,7 @@ function ciniki_artgallery_exhibitionUpdate(&$ciniki) {
 		'location'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Location'),
         'short_description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Short Description'), 
         'long_description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Long Description'), 
+		'webcollections'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Web Collections'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -74,9 +75,58 @@ function ciniki_artgallery_exhibitionUpdate(&$ciniki) {
 	}
 
 	//
+	// Start transaction
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionStart');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionRollback');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
+	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.artgallery');
+	if( $rc['stat'] != 'ok' ) { 
+		return $rc;
+	}   
+
+	//
 	// Update the exhibition
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-	return ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition', $args['exhibition_id'], $args, 0x07);
+	$rc =  ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition', $args['exhibition_id'], $args, 0x07);
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+
+	//
+	// If exhibition was added ok, Check if any web collections to add
+	//
+	if( isset($args['webcollections'])
+		&& isset($ciniki['business']['modules']['ciniki.web']) 
+		&& ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+		) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionUpdate');
+		$rc = ciniki_web_hooks_webCollectionUpdate($ciniki, $args['business_id'],
+			array('object'=>'ciniki.artgallery.exhibition', 'object_id'=>$args['exhibition_id'], 
+				'collection_ids'=>$args['webcollections']));
+		if( $rc['stat'] != 'ok' ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
+			return $rc;
+		}
+	}
+
+	//
+	// Commit the transaction
+	//
+	$rc = ciniki_core_dbTransactionCommit($ciniki, 'ciniki.artgallery');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+
+	//
+	// Update the last_change date in the business modules
+	// Ignore the result, as we don't want to stop user updates if this fails.
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
+	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'artgallery');
+
+	return array('stat'=>'ok');
 }
 ?>

@@ -23,6 +23,7 @@ function ciniki_artgallery_exhibitionGet($ciniki) {
 		'exhibition_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Exhibition'),
 		'images'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Images'),
 		'links'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Links'),
+		'webcollections'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Web Collections'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -133,6 +134,26 @@ function ciniki_artgallery_exhibitionGet($ciniki) {
 			$exhibition['links'] = $rc['links'];
 		} else {
 			$exhibition['links'] = array();
+		}
+	}
+
+	//
+	// Get the list of web collections, and which ones this exhibition is attached to
+	//
+	if( isset($args['webcollections']) && $args['webcollections'] == 'yes'
+		&& isset($ciniki['business']['modules']['ciniki.web']) 
+		&& ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+		) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionList');
+		$rc = ciniki_web_hooks_webCollectionList($ciniki, $args['business_id'],
+			array('object'=>'ciniki.artgallery.exhibition', 'object_id'=>$args['exhibition_id']));
+		if( $rc['stat'] != 'ok' ) {	
+			return $rc;
+		}
+		if( isset($rc['collections']) ) {
+			$exhibition['_webcollections'] = $rc['collections'];
+			$exhibition['webcollections'] = $rc['selected'];
+			$exhibition['webcollections_text'] = $rc['selected_text'];
 		}
 	}
 	

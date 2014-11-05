@@ -120,6 +120,21 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
 	}
 
 	//
+	// Remove the exhibition from any web collections
+	//
+	if( isset($ciniki['business']['modules']['ciniki.web']) 
+		&& ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+		) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionDeleteObjRef');
+		$rc = ciniki_web_hooks_collectionDeleteObjRef($ciniki, $args['business_id'],
+			array('object'=>'ciniki.artgallery.exhibition', 'object_id'=>$args['exhibition_id']));
+		if( $rc['stat'] != 'ok' ) {	
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
+			return $rc;
+		}
+	}
+
+	//
 	// Remove the exhibition
 	//
 	$rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition', 
