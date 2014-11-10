@@ -126,7 +126,7 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
 		&& ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
 		) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionDeleteObjRef');
-		$rc = ciniki_web_hooks_collectionDeleteObjRef($ciniki, $args['business_id'],
+		$rc = ciniki_web_hooks_webCollectionDeleteObjRef($ciniki, $args['business_id'],
 			array('object'=>'ciniki.artgallery.exhibition', 'object_id'=>$args['exhibition_id']));
 		if( $rc['stat'] != 'ok' ) {	
 			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
