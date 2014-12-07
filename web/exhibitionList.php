@@ -9,7 +9,7 @@
 // Returns
 // -------
 //
-function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $business_id, $type, $limit) {
+function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $business_id, $args) {
 
 	$strsql = "SELECT ciniki_artgallery_exhibitions.id, "
 		. "ciniki_artgallery_exhibitions.name, "
@@ -22,6 +22,7 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $business_id, 
 		. "IF(end_date = '0000-00-00', '', DATE_FORMAT(end_date, '%Y')) AS end_year, "
 		. "DATE_FORMAT(start_date, '%b %c, %Y') AS start_date, "
 		. "DATE_FORMAT(end_date, '%b %c, %Y') AS end_date, "
+//		. "IF(DATEDIFF(start_date, NOW())>0,'yes','no') AS upcoming, "
 		. "ciniki_artgallery_exhibitions.permalink, "
 		. "ciniki_artgallery_exhibitions.short_description, "
 		. "ciniki_artgallery_exhibitions.long_description, "
@@ -35,12 +36,22 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $business_id, 
 		// Check the exhibition is visible on the website
 		. "AND (ciniki_artgallery_exhibitions.webflags&0x01) = 0 "
 		. "";
-	if( $type == 'past' ) {
+	if( isset($args['type']) && $args['type'] == 'past' ) {
 		$strsql .= "AND ((ciniki_artgallery_exhibitions.end_date > ciniki_artgallery_exhibitions.start_date AND ciniki_artgallery_exhibitions.end_date < DATE(NOW())) "
 				. "OR (ciniki_artgallery_exhibitions.end_date < ciniki_artgallery_exhibitions.start_date AND ciniki_artgallery_exhibitions.start_date <= DATE(NOW())) "
 				. ") "
 			. "GROUP BY ciniki_artgallery_exhibitions.id "
 			. "ORDER BY ciniki_artgallery_exhibitions.start_date DESC, name "
+			. "";
+	} elseif( isset($args['type']) && $args['type'] == 'current' ) {
+		$strsql .= "AND (ciniki_artgallery_exhibitions.end_date >= DATE(NOW()) AND ciniki_artgallery_exhibitions.start_date < DATE(NOW())) "
+			. "GROUP BY ciniki_artgallery_exhibitions.id "
+			. "ORDER BY ciniki_artgallery_exhibitions.start_date ASC, name "
+			. "";
+	} elseif( isset($args['type']) && $args['type'] == 'upcoming' ) {
+		$strsql .= "AND (ciniki_artgallery_exhibitions.start_date > DATE(NOW())) "
+			. "GROUP BY ciniki_artgallery_exhibitions.id "
+			. "ORDER BY ciniki_artgallery_exhibitions.start_date ASC, name "
 			. "";
 	} else {
 		$strsql .= "AND (ciniki_artgallery_exhibitions.end_date >= DATE(NOW()) OR ciniki_artgallery_exhibitions.start_date >= DATE(NOW())) "
@@ -48,8 +59,11 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $business_id, 
 			. "ORDER BY ciniki_artgallery_exhibitions.start_date ASC, name "
 			. "";
 	}
-	if( $limit != '' && $limit > 0 && is_int($limit) ) {
-		$strsql .= "LIMIT $limit ";
+	if( isset($args['offset']) && $args['offset'] > 0
+		&& isset($args['limit']) && $args['limit'] > 0 ) {
+		$strsql .= "LIMIT " . $args['offset'] . ', ' . $args['limit'];
+	} elseif( $args['limit'] != '' && $args['limit'] > 0 && is_int($args['limit']) ) {
+		$strsql .= "LIMIT " . $args['limit'] . " ";
 	}
 
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
