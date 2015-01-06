@@ -123,21 +123,6 @@ function ciniki_artgallery_exhibitions() {
 				return 'M.startApp(\'ciniki.artgallery.exhibitionimages\',null,\'M.ciniki_artgallery_exhibitions.showExhibition();\',\'mc\',{\'exhibition_image_id\':\'' + d.image.id + '\'});';
 			}
 		};
-		this.exhibition.thumbSrc = function(s, i, d) {
-			if( d.image.image_data != null && d.image.image_data != '' ) {
-				return d.image.image_data;
-			} else {
-				return '/ciniki-mods/core/ui/themes/default/img/noimage_75.jpg';
-			}
-		};
-		this.exhibition.thumbTitle = function(s, i, d) {
-			if( d.image.name != null ) { return d.image.name; }
-			return '';
-		};
-		this.exhibition.thumbID = function(s, i, d) {
-			if( d.image.id != null ) { return d.image.id; }
-			return 0;
-		};
 		this.exhibition.thumbFn = function(s, i, d) {
 			return 'M.startApp(\'ciniki.artgallery.exhibitionimages\',null,\'M.ciniki_artgallery_exhibitions.showExhibition();\',\'mc\',{\'exhibition_image_id\':\'' + d.image.id + '\'});';
 		};
