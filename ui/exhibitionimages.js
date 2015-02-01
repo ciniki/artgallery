@@ -144,8 +144,8 @@ function ciniki_artgallery_exhibitionimages() {
 	};
 
 	this.downloadImage = function(iid, version) {
-		window.open(M.api.getUploadURL('ciniki.images.get', {'business_id':M.curBusinessID,
-			'image_id':iid, 'version':version, 'attachment':'yes'}));
+		M.api.openFile('ciniki.images.get', {'business_id':M.curBusinessID,
+			'image_id':iid, 'version':version, 'attachment':'yes'});
 	};
 
 }

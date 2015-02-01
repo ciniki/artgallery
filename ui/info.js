@@ -419,6 +419,6 @@ function ciniki_artgallery_info() {
 	};
 
 	this.downloadFile = function(fid) {
-		window.open(M.api.getUploadURL('ciniki.artgallery.fileDownload', {'business_id':M.curBusinessID, 'file_id':fid}));
+		M.api.openFile('ciniki.artgallery.fileDownload', {'business_id':M.curBusinessID, 'file_id':fid});
 	};
 }
