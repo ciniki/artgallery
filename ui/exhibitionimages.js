@@ -28,7 +28,6 @@ function ciniki_artgallery_exhibitionimages() {
 			}},
 			'_buttons':{'label':'', 'buttons':{
 				'save':{'label':'Save', 'fn':'M.ciniki_artgallery_exhibitionimages.saveImage();'},
-				'download':{'label':'Download Original', 'fn':'M.ciniki_artgallery_exhibitionimages.downloadImage(M.ciniki_artgallery_exhibitionimages.edit.data.image_id,\'original\');'},
 				'delete':{'label':'Delete', 'fn':'M.ciniki_artgallery_exhibitionimages.deleteImage();'},
 			}},
 		};
@@ -142,10 +141,4 @@ function ciniki_artgallery_exhibitionimages() {
 				});
 		}
 	};
-
-	this.downloadImage = function(iid, version) {
-		M.api.openFile('ciniki.images.get', {'business_id':M.curBusinessID,
-			'image_id':iid, 'version':version, 'attachment':'yes'});
-	};
-
 }
