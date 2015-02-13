@@ -41,6 +41,7 @@ function ciniki_artgallery_exhibitionAdd(&$ciniki) {
 		'end_date'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'type'=>'date', 'name'=>'End Date'),
 		'primary_image_id'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'name'=>'Image'),
 		'location'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Location'),
+		'location_code'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Location Code'),
         'short_description'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Short Description'), 
         'long_description'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Long Description'), 
 		'webcollections'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Web Collections'),

@@ -1,0 +1,39 @@
+#
+# Description
+# -----------
+# This table stores the links associated with an exhibition.  These are
+# typically the links to one or more of the artists in the exhibition.
+#
+# Fields
+# ------
+# id:					The ID of the exhibition link.
+# uuid:					The Universal Unique ID of the exhibition link
+# business_id:			The ID of the business the exhibition is part of.
+#
+# exhibition_id:		The ID of the exhibition the images is for.
+# customer_id:			The ID of the customer or member who is showing/selling their work.
+#
+# date_added:		The UTC date and time the exhibition link was added.
+# last_updated:		The UTC date and time the exhibition link was updated.
+#
+create table ciniki_artgallery_exhibition_items (
+	id int not null auto_increment,
+	uuid char(36) not null,
+	business_id int not null,
+	exhibition_id int not null,
+	customer_id int not null,
+	code varchar(50) not null,
+	name varchar(150) not null,
+	price decimal(19,4) not null,
+	fee_percent decimal(19,4) not null,
+	sell_date datetime not null,
+	sell_price decimal(19,4) not null,
+	business_fee decimal(19,4) not null,
+	seller_amount decimal(19,4) not null,
+	notes varchar(6000) not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (id),
+	index (exhibition_id, customer_id), 
+	index sync (business_id, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';

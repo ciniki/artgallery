@@ -24,6 +24,7 @@ function ciniki_artgallery_objects($ciniki) {
 			'end_date'=>array(),
 			'primary_image_id'=>array('ref'=>'ciniki.images.image'),
 			'location'=>array(),
+			'location_code'=>array(),
 			'short_description'=>array(),
 			'long_description'=>array(),
 			),
@@ -53,6 +54,25 @@ function ciniki_artgallery_objects($ciniki) {
 			'exhibition_id'=>array('ref'=>'ciniki.artgallery.exhibition'),
 			'name'=>array(),
 			'url'=>array(),
+			),
+		'history_table'=>'ciniki_artgallery_history',
+		);
+	$objects['exhibition_item'] = array(
+		'name'=>'Exhibition Item',
+		'sync'=>'yes',
+		'table'=>'ciniki_artgallery_exhibition_items',
+		'fields'=>array(
+			'exhibition_id'=>array('ref'=>'ciniki.artgallery.exhibition'),
+			'customer_id'=>array('ref'=>'ciniki.customers.customer'),
+			'code'=>array(),
+			'name'=>array(),
+			'price'=>array(),
+			'fee_percent'=>array(),
+			'sell_date'=>array(),
+			'sell_price'=>array(),
+			'business_fee'=>array(),
+			'seller_amount'=>array(),
+			'notes'=>array(),
 			),
 		'history_table'=>'ciniki_artgallery_history',
 		);

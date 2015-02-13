@@ -24,6 +24,8 @@ function ciniki_artgallery_exhibitionGet($ciniki) {
 		'images'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Images'),
 		'links'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Links'),
 		'webcollections'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Web Collections'),
+		'sellers'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sellers'),
+		'inventory'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Inventory'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -39,6 +41,18 @@ function ciniki_artgallery_exhibitionGet($ciniki) {
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
+
+	//
+	// Load the business intl settings
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
+	$rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$intl_timezone = $rc['settings']['intl-default-timezone'];
+	$intl_currency_fmt = numfmt_create($rc['settings']['intl-default-locale'], NumberFormatter::CURRENCY);
+	$intl_currency = $rc['settings']['intl-default-currency'];
 
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
@@ -56,6 +70,7 @@ function ciniki_artgallery_exhibitionGet($ciniki) {
 		. "IFNULL(DATE_FORMAT(ciniki_artgallery_exhibitions.end_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS end_date, "
 		. "ciniki_artgallery_exhibitions.primary_image_id, "
 		. "ciniki_artgallery_exhibitions.location, "
+		. "ciniki_artgallery_exhibitions.location_code, "
 		. "ciniki_artgallery_exhibitions.short_description, "
 		. "ciniki_artgallery_exhibitions.long_description "
 		. "FROM ciniki_artgallery_exhibitions "
@@ -66,7 +81,7 @@ function ciniki_artgallery_exhibitionGet($ciniki) {
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
 		array('container'=>'exhibitions', 'fname'=>'id', 'name'=>'exhibition',
 			'fields'=>array('id', 'name', 'permalink', 'webflags', 'web_visible', 'start_date', 'end_date', 'primary_image_id', 
-				'location', 'short_description', 'long_description')),
+				'location', 'location_code', 'short_description', 'long_description')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -154,6 +169,52 @@ function ciniki_artgallery_exhibitionGet($ciniki) {
 			$exhibition['_webcollections'] = $rc['collections'];
 			$exhibition['webcollections'] = $rc['selected'];
 			$exhibition['webcollections_text'] = $rc['selected_text'];
+		}
+	}
+
+	//
+	// Get the list of sellers
+	//
+	if( isset($args['sellers']) && $args['sellers'] == 'yes' 
+		&& isset($ciniki['business']['modules']['ciniki.artgallery']['flags']) 
+		&& ($ciniki['business']['modules']['ciniki.web']['flags']&0x02) == 0x02
+		) {
+		$strsql = "SELECT ciniki_artgallery_exhibition_items.customer_id, "
+			. "IFNULL(ciniki_customers.display_name, '') AS display_name, "
+			. "COUNT(ciniki_artgallery_exhibition_items.id) AS num_items, "
+			. "SUM(ciniki_artgallery_exhibition_items.price) AS total_price, "
+			. "SUM(ciniki_artgallery_exhibition_items.business_fee) AS total_business_fee, "
+			. "SUM(ciniki_artgallery_exhibition_items.seller_amount) AS total_seller_amount "
+			. "FROM ciniki_artgallery_exhibition_items "
+			. "LEFT JOIN ciniki_customers ON ("
+				. "ciniki_artgallery_exhibition_items.customer_id = ciniki_customers.id "
+				. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. ") "
+			. "WHERE ciniki_artgallery_exhibition_items.exhibition_id = '" . ciniki_core_dbQuote($ciniki, $args['exhibition_id']) . "' "
+			. "AND ciniki_artgallery_exhibition_items.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "GROUP BY ciniki_artgallery_exhibition_items.customer_id "
+			. "ORDER BY ciniki_customers.display_name "
+			. "";
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
+			array('container'=>'sellers', 'fname'=>'customer_id', 'name'=>'seller',
+				'fields'=>array('id'=>'customer_id', 'display_name', 'num_items',
+					'total_price', 'total_business_fee', 'total_seller_amount')),
+			));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( !isset($rc['sellers']) ) {
+			$exhibition['sellers'] = array();
+		} else {
+			$exhibition['sellers'] = $rc['sellers'];
+			foreach($exhibition['sellers'] as $sid => $seller) {
+				$exhibition['sellers'][$sid]['seller']['total_price'] = numfmt_format_currency($intl_currency_fmt, 
+					$seller['seller']['total_price'], $intl_currency);
+				$exhibition['sellers'][$sid]['seller']['total_business_fee'] = numfmt_format_currency($intl_currency_fmt, 
+					$seller['seller']['total_business_fee'], $intl_currency);
+				$exhibition['sellers'][$sid]['seller']['total_seller_amount'] = numfmt_format_currency($intl_currency_fmt, 
+					$seller['seller']['total_seller_amount'], $intl_currency);
+			}
 		}
 	}
 	

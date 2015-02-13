@@ -18,6 +18,8 @@
 # start_date:			The start date of the exhibition
 # end_date:				The end date of the exhibition
 # primary_image_id:		The ID of the image for the exhibition.
+#
+# location_code:		The short code for the location. Used in lists and UI.
 # location:				The location or room in the gallery (optional)
 # short_description:	The short description of the exhibition, which 
 #						will be displayed in listings.
@@ -36,6 +38,7 @@ create table ciniki_artgallery_exhibitions (
 	start_date date not null,
 	end_date date not null,
 	primary_image_id int not null,
+	location_code varchar(50) not null,
 	location varchar(150) not null,
 	short_description text not null,
 	long_description text not null,
@@ -44,4 +47,4 @@ create table ciniki_artgallery_exhibitions (
 	primary key (id),
 	unique index (business_id, permalink),
 	index sync (uuid, last_updated)
-) ENGINE='InnoDB', COMMENT='v1.01';
+) ENGINE='InnoDB', COMMENT='v1.02';
