@@ -44,7 +44,7 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $business_id, 
 			. "ORDER BY ciniki_artgallery_exhibitions.start_date DESC, name "
 			. "";
 	} elseif( isset($args['type']) && $args['type'] == 'current' ) {
-		$strsql .= "AND (ciniki_artgallery_exhibitions.end_date >= DATE(NOW()) AND ciniki_artgallery_exhibitions.start_date < DATE(NOW())) "
+		$strsql .= "AND (ciniki_artgallery_exhibitions.end_date >= DATE(NOW()) AND ciniki_artgallery_exhibitions.start_date <= DATE(NOW())) "
 			. "GROUP BY ciniki_artgallery_exhibitions.id "
 			. "ORDER BY ciniki_artgallery_exhibitions.start_date ASC, name "
 			. "";
