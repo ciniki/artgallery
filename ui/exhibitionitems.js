@@ -294,12 +294,12 @@ function ciniki_artgallery_exhibitionitems() {
 	this.itemDelete = function() {
 		if( confirm("Are you sure you want to remove this item?") ) {
 			var rsp = M.api.getJSONCb('ciniki.artgallery.exhibitionItemDelete', 
-				{'business_id':M.curBusinessID, 'item_id':M.ciniki_artgallery_exhibitionitems.item.item_id}, function(rsp) {
+				{'business_id':M.curBusinessID, 'item_id':M.ciniki_artgallery_exhibitionitems.itemedit.item_id}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
 						M.api.err(rsp);
 						return false;
 					}
-					M.ciniki_artgallery_exhibitionitems.item.close();
+					M.ciniki_artgallery_exhibitionitems.itemedit.close();
 				});
 		}
 	}
