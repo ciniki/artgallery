@@ -24,7 +24,7 @@ function ciniki_artgallery_objects($ciniki) {
 			'end_date'=>array(),
 			'primary_image_id'=>array('ref'=>'ciniki.images.image'),
 			'location'=>array(),
-			'location_code'=>array(),
+			'location_id'=>array('default'=>'0'),
 			'short_description'=>array(),
 			'long_description'=>array(),
 			),
@@ -76,6 +76,18 @@ function ciniki_artgallery_objects($ciniki) {
 			),
 		'history_table'=>'ciniki_artgallery_history',
 		);
+	$objects['exhibition_tag'] = array(
+		'name'=>'Exhibition Tag',
+		'sync'=>'yes',
+		'table'=>'ciniki_artgallery_exhibition_tags',
+		'fields'=>array(
+			'exhibition_id'=>array('ref'=>'ciniki.artgallery.exhibition'),
+			'tag_type'=>array(),
+			'tag_name'=>array(),
+			'permalink'=>array(),
+			),
+		'history_table'=>'ciniki_artgallery_history',
+		);
 	$objects['file'] = array(
 		'name'=>'File',
 		'sync'=>'yes',
@@ -91,6 +103,25 @@ function ciniki_artgallery_objects($ciniki) {
 			'org_filename'=>array(),
 			'publish_date'=>array(),
 			'binary_content'=>array('history'=>'no'),
+			),
+		'history_table'=>'ciniki_artgallery_history',
+		);
+	$objects['location'] = array(
+		'name'=>'Location',
+		'sync'=>'yes',
+		'table'=>'ciniki_artgallery_locations',
+		'fields'=>array(
+			'name'=>array(),
+			'permalink'=>array(),
+			'address1'=>array(),
+			'address2'=>array(),
+			'city'=>array(),
+			'province'=>array(),
+			'postal'=>array(),
+			'latitude'=>array(),
+			'longitude'=>array(),
+			'url'=>array(),
+			'notes'=>array(),
 			),
 		'history_table'=>'ciniki_artgallery_history',
 		);

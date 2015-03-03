@@ -19,7 +19,7 @@
 # end_date:				The end date of the exhibition
 # primary_image_id:		The ID of the image for the exhibition.
 #
-# location_code:		The short code for the location. Used in lists and UI.
+# location_id:			The ID of the location in the ciniki_artgallery_locations table.
 # location:				The location or room in the gallery (optional)
 # short_description:	The short description of the exhibition, which 
 #						will be displayed in listings.
@@ -39,6 +39,7 @@ create table ciniki_artgallery_exhibitions (
 	end_date date not null,
 	primary_image_id int not null,
 	location_code varchar(50) not null,
+	location_id int not null,
 	location varchar(150) not null,
 	short_description text not null,
 	long_description text not null,

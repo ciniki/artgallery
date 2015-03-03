@@ -14,6 +14,7 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
 	$strsql = "SELECT ciniki_artgallery_exhibitions.id, "
 		. "ciniki_artgallery_exhibitions.name, "
 		. "ciniki_artgallery_exhibitions.location, "
+		. "ciniki_artgallery_exhibitions.location_id, "
 		. "ciniki_artgallery_exhibitions.permalink, "
 		. "DATE_FORMAT(start_date, '%b %c, %Y') AS start_date, "
 		. "DATE_FORMAT(end_date, '%b %c, %Y') AS end_date, "
@@ -45,7 +46,7 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.artgallery', array(
 		array('container'=>'exhibitions', 'fname'=>'id', 
-			'fields'=>array('id', 'name', 'location', 'permalink', 'image_id'=>'primary_image_id', 
+			'fields'=>array('id', 'name', 'location', 'location_id', 'permalink', 'image_id'=>'primary_image_id', 
 				'start_month', 'start_day', 'start_year', 'end_month', 'end_day', 'end_year',
 				'description'=>'long_description')),
 		array('container'=>'images', 'fname'=>'image_id', 
@@ -60,6 +61,58 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1119', 'msg'=>'Unable to find exhibition'));
 	}
 	$exhibition = array_pop($rc['exhibitions']);
+
+	//
+	// Get the location for the exhibition
+	//
+	if( ($ciniki['business']['modules']['ciniki.artgallery']['flags']&0x01) > 0 
+		&& $exhibition['location_id'] > 0 
+		) {
+		$strsql = "SELECT ciniki_artgallery_locations.name, "	
+			. "ciniki_artgallery_locations.address1, "	
+			. "ciniki_artgallery_locations.address2, "	
+			. "ciniki_artgallery_locations.city, "	
+			. "ciniki_artgallery_locations.province, "	
+			. "ciniki_artgallery_locations.postal, "	
+			. "ciniki_artgallery_locations.latitude, "	
+			. "ciniki_artgallery_locations.longitude "	
+			. "FROM ciniki_artgallery_locations "
+			. "WHERE ciniki_artgallery_locations.id = '" . ciniki_core_dbQuote($ciniki, $exhibition['location_id']) . "' "
+			. "AND ciniki_artgallery_locations.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. "";
+		$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.artgallery', 'location');
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['location']) ) {
+			$exhibition['location_details'] = $rc['location'];
+			$exhibition['location'] = $rc['location']['name'];
+			$location = $rc['location'];
+
+			$joined_address = $location['address1'] . "<br/>";
+			if( isset($location['address2']) && $location['address2'] != '' ) {
+				$joined_address .= $location['address2'] . "<br/>";
+			}
+			$city = '';
+			$comma = '';
+			if( isset($location['city']) && $location['city'] != '' ) {
+				$city = $location['city'];
+				$comma = ', ';
+			}
+			if( isset($location['province']) && $location['province'] != '' ) {
+				$city .= $comma . $location['province'];
+				$comma = ', ';
+			}
+			if( isset($location['postal']) && $location['postal'] != '' ) {
+				$city .= $comma . ' ' . $location['postal'];
+				$comma = ', ';
+			}
+			if( $city != '' ) {
+				$joined_address .= $city . "<br/>";
+			}
+			$exhibition['location_address'] = $joined_address;
+		}
+	}
 
 	//
 	// Get any links for the exhibition

@@ -28,9 +28,10 @@ function ciniki_artgallery_exhibitionUpdate(&$ciniki) {
 		'end_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'End Date'),
 		'primary_image_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Image'),
 		'location'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Location'),
-		'location_code'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Location Code'),
+		'location_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Location'),
         'short_description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Short Description'), 
         'long_description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Long Description'), 
+		'categories'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Categories'),
 		'webcollections'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Web Collections'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -91,9 +92,23 @@ function ciniki_artgallery_exhibitionUpdate(&$ciniki) {
 	// Update the exhibition
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-	$rc =  ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition', $args['exhibition_id'], $args, 0x07);
+	$rc =  ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition', $args['exhibition_id'], $args, 0x04);
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
+	}
+
+	//
+	// Update the categories
+	//
+	if( isset($args['categories']) ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
+		$rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.artgallery', 'exhibition_tag', $args['business_id'],
+			'ciniki_artgallery_exhibition_tags', 'ciniki_artgallery_history',
+			'exhibition_id', $args['exhibition_id'], 10, $args['categories']);
+		if( $rc['stat'] != 'ok' ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
+			return $rc;
+		}
 	}
 
 	//
