@@ -61,6 +61,9 @@ function ciniki_artgallery_exhibitionItemList($ciniki) {
 		. "ciniki_customers.display_name, "
 		. "ciniki_artgallery_exhibition_items.code, "
 		. "ciniki_artgallery_exhibition_items.name, "
+		. "ciniki_artgallery_exhibition_items.medium, "
+		. "ciniki_artgallery_exhibition_items.size, "
+		. "ciniki_artgallery_exhibition_items.item_condition, "
 		. "ciniki_artgallery_exhibition_items.price, "
 		. "ciniki_artgallery_exhibition_items.fee_percent, "
 		. "DATE_FORMAT(ciniki_artgallery_exhibition_items.sell_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS sell_date, "
@@ -87,7 +90,7 @@ function ciniki_artgallery_exhibitionItemList($ciniki) {
 		. "";
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
 		array('container'=>'items', 'fname'=>'id', 'name'=>'item',
-			'fields'=>array('id', 'display_name', 'code', 'name', 
+			'fields'=>array('id', 'display_name', 'code', 'name', 'medium', 'size', 'item_condition', 
 				'price', 'fee_percent', 'sell_date', 'sell_price', 'business_fee', 'seller_amount', 'notes')),
 		));
 	if( $rc['stat'] != 'ok' ) {

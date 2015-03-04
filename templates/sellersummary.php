@@ -134,6 +134,13 @@ function ciniki_artgallery_templates_sellersummary(&$ciniki, $business_id, $args
 			$lh = 6;
 			$code = $item['code'];
 			$name = $item['name'];
+			$details = '';
+			if( isset($item['medium']) && $item['medium'] != '' ) { $details .= $item['medium']; }
+			if( isset($item['size']) && $item['size'] != '' ) { $details .= ($details!=''?', ':'') . $item['size']; }
+			if( isset($item['item_condition']) && $item['item_condition'] != '' ) { $details .= ($details!=''?', ':'') . $item['item_condition']; }
+			if( $details != '' ) {
+				$name .= "\n(" . $details . ")";
+			}
 			$total_sell_price = bcadd($total_sell_price, $item['sell_price'], 4);
 			$total_business_fee = bcadd($total_business_fee, $item['business_fee'], 4);
 			$total_seller_amount = bcadd($total_seller_amount, $item['seller_amount'], 4);
