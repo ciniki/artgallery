@@ -19,6 +19,7 @@ function ciniki_artgallery_locations() {
 				'city':{'label':'City', 'type':'text'},
 				'province':{'label':'Province', 'type':'text'},
 				'postal':{'label':'Postal', 'type':'text'},
+				'url':{'label':'URL', 'type':'text', 'hint':''},
 				}},
 			'_map':{'label':'Location Map', 'visible':'yes', 'fields':{
 //				'page-contact-google-map':{'label':'Display Map', 'type':'multitoggle', 'default':'no', 'toggles':this.activeToggles},
