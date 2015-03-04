@@ -351,9 +351,10 @@ function ciniki_artgallery_exhibitions() {
 			this.menu.size = 'medium';
 			this.menu.sections.locations.visible = 'no';
 			this.menu.sections.sellers.visible = 'no';
-			this.menu.sections._categories.visible = 'no';
 			this.exhibition.sections.sellers.visible = 'no';
 			this.exhibition.sections.info.list.location.visible = 'yes';
+			this.exhibition.sections.info.list.categories_text.visible = 'no';
+			this.edit.sections._categories.visible = 'no';
 			this.edit.sections.info.fields.location.active = 'yes';
 			this.edit.sections.info.fields.location_id.active = 'no';
 			this.exhibition.sections.info.list.location_text.visible = 'no';
