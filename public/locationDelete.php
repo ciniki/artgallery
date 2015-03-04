@@ -51,7 +51,7 @@ function ciniki_artgallery_locationDelete(&$ciniki) {
 		return $rc;
 	}
 	if( !isset($rc['location']) ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1789', 'msg'=>'Unable to find existing item'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2265', 'msg'=>'Unable to find existing item'));
 	}
 	$location_uuid = $rc['location']['uuid'];
 

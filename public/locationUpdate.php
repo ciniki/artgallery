@@ -72,7 +72,7 @@ function ciniki_artgallery_locationUpdate(&$ciniki) {
 			return $rc;
 		}
 		if( $rc['num_rows'] > 0 ) {
-			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1130', 'msg'=>'You already have an location with this name, please choose another name.'));
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2266', 'msg'=>'You already have an location with this name, please choose another name.'));
 		}
 	}
 
