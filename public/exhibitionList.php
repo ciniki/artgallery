@@ -151,7 +151,7 @@ function ciniki_artgallery_exhibitionList($ciniki) {
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;
 		}
-		if( isset($rc['uncategorized']) ) {
+		if( isset($rc['uncategorized']) && $rc['uncategorized']['num_exhibitions'] > 0 ) {
 			$rsp['categories'][] = array('tag'=>array('permalink'=>'--', 
 				'name'=>'Uncategorized', 
 				'num_exhibitions'=>$rc['uncategorized']['num_exhibitions'],
@@ -197,15 +197,16 @@ function ciniki_artgallery_exhibitionList($ciniki) {
 		) {
 		$strsql = "SELECT ciniki_artgallery_exhibition_items.customer_id, "
 			. "IFNULL(ciniki_customers.display_name, '') AS display_name, "
-			. "COUNT(ciniki_artgallery_exhibition_items.exhibition_id) AS num_exhibitions "
+			. "COUNT(DISTINCT ciniki_artgallery_exhibition_items.exhibition_id) AS num_exhibitions "
 			. "FROM ciniki_artgallery_exhibition_items "
 			. "LEFT JOIN ciniki_customers ON ("
 				. "ciniki_artgallery_exhibition_items.customer_id = ciniki_customers.id "
 				. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 				. ") "
 			. "WHERE ciniki_artgallery_exhibition_items.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-			. "GROUP BY ciniki_artgallery_exhibition_items.customer_id, exhibition_id "
-			. "ORDER BY display_name, exhibition_id "
+			. "AND ciniki_artgallery_exhibition_items.exhibition_id > 0 "
+			. "GROUP BY ciniki_artgallery_exhibition_items.customer_id "
+			. "ORDER BY display_name "
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
 			array('container'=>'sellers', 'fname'=>'customer_id', 'name'=>'customer',

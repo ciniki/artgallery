@@ -107,7 +107,7 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
 		return $rc;
 	}
 	if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
-		$images = $rc['rows'];
+		$links = $rc['rows'];
 		
 		foreach($links as $iid => $link) {
 			$rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition_link', 

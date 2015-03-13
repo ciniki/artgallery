@@ -64,7 +64,7 @@ function ciniki_artgallery_exhibitionItemSearch($ciniki) {
 		. "ciniki_artgallery_exhibition_items.name, "
 		. "ciniki_artgallery_exhibition_items.medium, "
 		. "ciniki_artgallery_exhibition_items.size, "
-		. "ciniki_artgallery_exhibition_items.condition, "
+		. "ciniki_artgallery_exhibition_items.item_condition, "
 		. "ciniki_artgallery_exhibition_items.price, "
 		. "ciniki_artgallery_exhibition_items.fee_percent, "
 		. "ciniki_artgallery_exhibition_items.notes "

@@ -21,15 +21,15 @@ function ciniki_artgallery_locations() {
 				'postal':{'label':'Postal', 'type':'text'},
 				'url':{'label':'URL', 'type':'text', 'hint':''},
 				}},
-			'_map':{'label':'Location Map', 'visible':'yes', 'fields':{
+			'_map':{'label':'Location Map', 'aside':'yes', 'visible':'yes', 'fields':{
 //				'page-contact-google-map':{'label':'Display Map', 'type':'multitoggle', 'default':'no', 'toggles':this.activeToggles},
 				'latitude':{'label':'Latitude', 'type':'text', 'size':'small'},
 				'longitude':{'label':'Longitude', 'type':'text', 'size':'small'},
 				}},
-			'_map_buttons':{'label':'', 'buttons':{
+			'_map_buttons':{'label':'', 'aside':'yes', 'buttons':{
 				'_latlong':{'label':'Lookup Lat/Long', 'fn':'M.ciniki_artgallery_locations.edit.lookupLatLong();'},
 				}},
-			'_notes':{'label':'Notes', 'active':'no', 'fields':{
+			'_notes':{'label':'Notes', 'active':'yes', 'fields':{
 				'notes':{'label':'', 'hidelabel':'yes', 'type':'textarea', 'size':'large'},
 				}},
 			'_buttons':{'label':'', 'buttons':{
