@@ -63,7 +63,7 @@ function ciniki_artgallery_exhibitions() {
 				return 'M.ciniki_artgallery_exhibitions.showMenu(null,0,0,\'' + d.customer.id + '\',\'\',\'' + escape(d.customer.display_name) + '\');';
 			}
 		};
-		this.menu.addButton('add', 'Add', 'M.ciniki_artgallery_exhibitions.showEdit(\'M.ciniki_artgallery_exhibitions.showMenu();\');');
+		this.menu.addButton('add', 'Add', 'M.ciniki_artgallery_exhibitions.showEdit(\'M.ciniki_artgallery_exhibitions.showMenu();\',0);');
 		this.menu.addClose('Back');
 
 		//
@@ -493,6 +493,8 @@ function ciniki_artgallery_exhibitions() {
 	// as an exhibition and sponsor and organizer, etc.
 	//
 	this.showEdit = function(cb, mid) {
+		this.edit.reset();
+		this.edit.data = {};
 		if( mid != null ) { this.edit.exhibition_id = mid; }
 		this.edit.sections._buttons.buttons.delete.visible = (this.edit.exhibition_id>0?'yes':'no');
 		var rsp = M.api.getJSONCb('ciniki.artgallery.exhibitionGet', {'business_id':M.curBusinessID, 

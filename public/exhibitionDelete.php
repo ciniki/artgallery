@@ -134,6 +134,18 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
 		}
 	}
 
+	// 
+	// Remove any tags
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsDelete');
+	$rc = ciniki_core_tagsDelete($ciniki, 'ciniki.artgallery', 'exhibition_tag', $args['business_id'],
+		'ciniki_artgallery_exhibition_tags', 'ciniki_artgallery_history',
+		'exhibition_id', $args['exhibition_id']);
+	if( $rc['stat'] != 'ok' ) {
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
+		return $rc;
+	}
+
 	//
 	// Remove the exhibition
 	//
