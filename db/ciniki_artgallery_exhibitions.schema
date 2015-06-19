@@ -19,8 +19,10 @@
 # end_date:				The end date of the exhibition
 # primary_image_id:		The ID of the image for the exhibition.
 #
+# location_code:		A shortform code for use internally of the exhibition location.
 # location_id:			The ID of the location in the ciniki_artgallery_locations table.
 # location:				The location or room in the gallery (optional)
+#
 # short_description:	The short description of the exhibition, which 
 #						will be displayed in listings.
 # long_description:		The full description used for the info page about the exhibition.

@@ -13,6 +13,25 @@
 # exhibition_id:		The ID of the exhibition the images is for.
 # customer_id:			The ID of the customer or member who is showing/selling their work.
 #
+# code:					The code for the item. This can be used to give each item a unique
+#						code that can be tracked for sales purposes. The item can be tagged with the code.
+#
+# name:					The name of the item.
+# medium:				The medium of the item (Canvas, Cards, etc)
+# size:					The size of the item.
+# item_condition:		The condition of the item when up for sale.
+# price:				The listed price of the item.
+# fee_percent:			The percent commission that will be taken by the gallery.
+# sell_date:			The date the item was sold.
+# sell_price:			The price the item sold for. This may be different than the listed price if was sold
+#						as part of a bundle (3 for $5)
+#
+# business_fee:			The amount the gallery received for their commission. The sell_price is split
+#						between the business_fee and the seller_amount.
+# seller_amount:		The amount the seller received. 
+#
+# notes:				Any notes about the item.
+#
 # date_added:		The UTC date and time the exhibition link was added.
 # last_updated:		The UTC date and time the exhibition link was updated.
 #
