@@ -80,7 +80,7 @@ function ciniki_artgallery_exhibitionitems() {
 				switch(j) {
 					case 0: return d.item.code;
 					case 1: return d.item.name;
-					case 2: return d.item.price;
+					case 2: return (d.item.flags&0x01)>0?'NFS':d.item.price;
 					case 3: return d.item.fee_percent;
 					case 4: return d.item.sell_date;
 					case 5: return d.item.business_fee;
@@ -136,6 +136,7 @@ function ciniki_artgallery_exhibitionitems() {
                 'medium':{'label':'Medium', 'hint':'', 'type':'text'},
                 'size':{'label':'Size', 'hint':'', 'type':'text'},
                 'item_condition':{'label':'Condition', 'hint':'', 'type':'text'},
+                'flags':{'label':'Options', 'type':'flags', 'flags':{'1':{'name':'NFS'}}},
                 'price':{'label':'Price', 'hint':'', 'type':'text', 'size':'small'},
                 'fee_percent':{'label':'Fee %', 'hint':'', 'type':'text', 'size':'small', 'onchangeFn':'M.ciniki_artgallery_exhibitionitems.itemedit.calc'},
                 'sell_date':{'label':'Sell Date', 'hint':'', 'type':'date', 'onchangeFn':'M.ciniki_artgallery_exhibitionitems.itemedit.calc'},
@@ -166,15 +167,16 @@ function ciniki_artgallery_exhibitionitems() {
 		this.itemedit.liveSearchResultRowFn = function(s, f, i, j, d) { 
 			if( (f == 'name' )
 				&& d.result != null ) {
-				return 'M.ciniki_artgallery_exhibitionitems.itemedit.updateItem(\'' + s + '\',\'' + f + '\',\'' + escape(d.result.code) + '\',\'' + escape(d.result.name) + '\',\'' + escape(d.result.price) + '\',\'' + escape(d.result.fee_percent) + '\');';
+				return 'M.ciniki_artgallery_exhibitionitems.itemedit.updateItem(\'' + s + '\',\'' + f + '\',\'' + escape(d.result.code) + '\',\'' + escape(d.result.name) + '\',\'' + d.result.flags + '\',\'' + escape(d.result.price) + '\',\'' + escape(d.result.fee_percent) + '\');';
 			}
 		};
-		this.itemedit.updateItem = function(s, fid, code, name, medium, size, item_condition, price, fee_percent) {
+		this.itemedit.updateItem = function(s, fid, code, name, medium, size, item_condition, flags, price, fee_percent) {
 			M.gE(this.panelUID + '_code').value = unescape(code);
 			M.gE(this.panelUID + '_name').value = unescape(name);
 			M.gE(this.panelUID + '_medium').value = unescape(medium);
 			M.gE(this.panelUID + '_size').value = unescape(size);
 			M.gE(this.panelUID + '_item_condition').value = unescape(item_condition);
+			M.gE(this.panelUID + '_flags').value = flags;
 			M.gE(this.panelUID + '_price').value = unescape(price);
 			M.gE(this.panelUID + '_fee_percent').value = unescape(fee_percent);
 			this.removeLiveSearch(s, fid);

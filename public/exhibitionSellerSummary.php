@@ -95,6 +95,7 @@ function ciniki_artgallery_exhibitionSellerSummary($ciniki) {
 		. "ciniki_artgallery_exhibition_items.id AS item_id, "
 		. "ciniki_artgallery_exhibition_items.code, "
 		. "ciniki_artgallery_exhibition_items.name, "
+		. "ciniki_artgallery_exhibition_items.flags, "
 		. "ciniki_artgallery_exhibition_items.medium, "
 		. "ciniki_artgallery_exhibition_items.size, "
 		. "ciniki_artgallery_exhibition_items.item_condition, "
@@ -122,7 +123,7 @@ function ciniki_artgallery_exhibitionSellerSummary($ciniki) {
 		array('container'=>'sellers', 'fname'=>'customer_id',
 			'fields'=>array('id'=>'customer_id', 'display_name')),
 		array('container'=>'items', 'fname'=>'item_id',
-			'fields'=>array('id'=>'item_id', 'code', 'name', 'medium', 'size', 'item_condition', 
+			'fields'=>array('id'=>'item_id', 'code', 'name', 'flags', 'medium', 'size', 'item_condition', 
 				'price', 'fee_percent', 'sell_date', 'sell_price', 'business_fee', 'seller_amount')),
 		));
 	if( $rc['stat'] != 'ok' ) {

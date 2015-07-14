@@ -29,6 +29,7 @@ function ciniki_artgallery_exhibitionItemUpdate(&$ciniki) {
 		'item_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Item'), 
 		'code'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Code'), 
 		'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'), 
+		'flags'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Options'), 
 		'medium'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Medium'), 
 		'size'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Size'), 
 		'item_condition'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Condition'), 

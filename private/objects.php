@@ -66,6 +66,7 @@ function ciniki_artgallery_objects($ciniki) {
 			'customer_id'=>array('ref'=>'ciniki.customers.customer'),
 			'code'=>array(),
 			'name'=>array(),
+			'flags'=>array('default'=>'0'),
 			'medium'=>array(),
 			'size'=>array(),
 			'item_condition'=>array(),

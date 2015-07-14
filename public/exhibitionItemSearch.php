@@ -62,6 +62,7 @@ function ciniki_artgallery_exhibitionItemSearch($ciniki) {
 		. "ciniki_customers.display_name, "
 		. "ciniki_artgallery_exhibition_items.code, "
 		. "ciniki_artgallery_exhibition_items.name, "
+		. "ciniki_artgallery_exhibition_items.flags, "
 		. "ciniki_artgallery_exhibition_items.medium, "
 		. "ciniki_artgallery_exhibition_items.size, "
 		. "ciniki_artgallery_exhibition_items.item_condition, "
@@ -83,7 +84,7 @@ function ciniki_artgallery_exhibitionItemSearch($ciniki) {
 		. "";
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
 		array('container'=>'results', 'fname'=>'id', 'name'=>'result',
-			'fields'=>array('id', 'display_name', 'code', 'name', 
+			'fields'=>array('id', 'display_name', 'code', 'name', 'flags',
 				'medium', 'size', 'item_condition', 'price', 'fee_percent', 'notes')),
 		));
 	if( $rc['stat'] != 'ok' ) {

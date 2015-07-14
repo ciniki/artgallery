@@ -141,12 +141,18 @@ function ciniki_artgallery_templates_sellersummary(&$ciniki, $business_id, $args
 			if( $details != '' ) {
 				$name .= "\n(" . $details . ")";
 			}
-			$total_sell_price = bcadd($total_sell_price, $item['sell_price'], 4);
-			$total_business_fee = bcadd($total_business_fee, $item['business_fee'], 4);
-			$total_seller_amount = bcadd($total_seller_amount, $item['seller_amount'], 4);
-			$sell_price = numfmt_format_currency($intl_currency_fmt, $item['sell_price'], $intl_currency);
-			$business_fee = numfmt_format_currency($intl_currency_fmt, $item['business_fee'], $intl_currency);
-			$seller_amount = numfmt_format_currency($intl_currency_fmt, $item['seller_amount'], $intl_currency);
+			if( ($item['flags']&0x01) == 0 ) {
+				$total_sell_price = bcadd($total_sell_price, $item['sell_price'], 4);
+				$total_business_fee = bcadd($total_business_fee, $item['business_fee'], 4);
+				$total_seller_amount = bcadd($total_seller_amount, $item['seller_amount'], 4);
+				$sell_price = numfmt_format_currency($intl_currency_fmt, $item['sell_price'], $intl_currency);
+				$business_fee = numfmt_format_currency($intl_currency_fmt, $item['business_fee'], $intl_currency);
+				$seller_amount = numfmt_format_currency($intl_currency_fmt, $item['seller_amount'], $intl_currency);
+			} else {
+				$sell_price = 'NFS';
+				$business_fee = '';
+				$seller_amount = '';
+			}
 			$nlines = $pdf->getNumLines($name, $w[1]);
 			if( $nlines == 2 ) {
 				$lh = 3+($nlines*5);

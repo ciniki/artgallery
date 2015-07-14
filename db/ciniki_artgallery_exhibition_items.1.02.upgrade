@@ -1,0 +1,5 @@
+#
+# Add the flags column
+#
+ALTER TABLE ciniki_artgallery_exhibition_items ADD COLUMN flags tinyint unsigned not null AFTER name;
+ALTER TABLE ciniki_artgallery_exhibition_items COMMENT='v1.02';

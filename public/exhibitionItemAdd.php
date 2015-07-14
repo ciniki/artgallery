@@ -29,6 +29,7 @@ function ciniki_artgallery_exhibitionItemAdd(&$ciniki) {
 		'customer_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Member'), 
 		'code'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Code'), 
 		'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'), 
+		'flags'=>array('required'=>'no', 'blank'=>'no', 'default'=>'0', 'name'=>'Options'), 
 		'medium'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Medium'), 
 		'size'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Size'), 
 		'item_condition'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Condition'), 

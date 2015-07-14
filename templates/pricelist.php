@@ -122,7 +122,11 @@ function ciniki_artgallery_templates_pricelist(&$ciniki, $business_id, $args) {
 	foreach($args['items'] as $item) {
 		$code = $item['code'];
 		$name = $item['name'];
-		$price = numfmt_format_currency($intl_currency_fmt, $item['price'], $intl_currency);
+		if( ($item['flags']&0x01) == 1 ) {
+			$price = 'NFS';
+		} else {
+			$price = numfmt_format_currency($intl_currency_fmt, $item['price'], $intl_currency);
+		}
 		$nlines = $pdf->getNumLines($name, $w[1]);
 		if( $nlines == 2 ) {
 			$lh = 3+($nlines*5);
