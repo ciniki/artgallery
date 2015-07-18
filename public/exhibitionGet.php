@@ -87,6 +87,7 @@ function ciniki_artgallery_exhibitionGet($ciniki) {
 			. "WHERE ciniki_artgallery_locations.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "ORDER BY ciniki_artgallery_locations.name "
 			. "";
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
 			array('container'=>'locations', 'fname'=>'id', 'name'=>'location',
 				'fields'=>array('id', 'name', 'city')),
