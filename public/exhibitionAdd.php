@@ -62,11 +62,52 @@ function ciniki_artgallery_exhibitionAdd(&$ciniki) {
         return $rc;
     }   
 	$modules = $rc['modules'];
+	
+	//
+	// Load the business intl settings
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
+	$rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$intl_timezone = $rc['settings']['intl-default-timezone'];
+	$intl_currency_fmt = numfmt_create($rc['settings']['intl-default-locale'], NumberFormatter::CURRENCY);
+	$intl_currency = $rc['settings']['intl-default-currency'];
 
-//	$name = $args['name'];
-//	$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 ]/', '', strtolower($name)));
+	//
+	// Start the permalink with the exhibition name
+	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
 	$args['permalink'] = ciniki_core_makePermalink($ciniki, $args['name']);
+
+	//
+	// Attached the location permalink to the exhibition permalink
+	//
+	if( ($ciniki['business']['modules']['ciniki.artgallery']['flags']&0x01) == 1 ) {
+		if( isset($args['location_id']) && $args['location_id'] > 0 ) { 
+			$strsql = "SELECT id, name, permalink "
+				. "FROM ciniki_artgallery_locations "
+				. "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['location_id']) . "' "
+				. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. "";
+			$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.artgallery', 'location');
+			if( $rc['stat'] != 'ok' ) {
+				return $rc;
+			}
+			if( isset($rc['location']['permalink']) && $rc['location']['permalink'] != '' ) {
+				$args['permalink'] .= '-' . $rc['location']['permalink'];
+			}
+		}
+	}
+
+	//
+	// Check if there is a start date
+	//
+	if( isset($args['start_date']) ) {
+		$dt = new DateTime($args['start_date'], new DateTimeZone($intl_timezone));
+		$args['permalink'] .= '-' . $dt->format('M-Y');
+	}
 
 	//
 	// Check the permalink doesn't already exist
