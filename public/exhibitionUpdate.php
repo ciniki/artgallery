@@ -97,7 +97,6 @@ function ciniki_artgallery_exhibitionUpdate(&$ciniki) {
 		// Attached the location permalink to the exhibition permalink
 		//
 		if( ($ciniki['business']['modules']['ciniki.artgallery']['flags']&0x01) == 1 ) {
-			error_log('testing');
 			$strsql = "SELECT id, name, permalink "
 				. "FROM ciniki_artgallery_locations "
 				. "WHERE id = '" . ciniki_core_dbQuote($ciniki, (isset($args['location_id'])?$args['location_id']:$exhibition['location_id'])) . "' "
@@ -107,7 +106,6 @@ function ciniki_artgallery_exhibitionUpdate(&$ciniki) {
 			if( $rc['stat'] != 'ok' ) {
 				return $rc;
 			}
-			error_log(print_r($rc, true));
 			if( isset($rc['location']['permalink']) && $rc['location']['permalink'] != '' ) {
 				$args['permalink'] .= '-' . $rc['location']['permalink'];
 			}
