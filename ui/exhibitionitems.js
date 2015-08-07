@@ -167,7 +167,7 @@ function ciniki_artgallery_exhibitionitems() {
 		this.itemedit.liveSearchResultRowFn = function(s, f, i, j, d) { 
 			if( (f == 'name' )
 				&& d.result != null ) {
-				return 'M.ciniki_artgallery_exhibitionitems.itemedit.updateItem(\'' + s + '\',\'' + f + '\',\'' + escape(d.result.code) + '\',\'' + escape(d.result.name) + '\',\'' + d.result.flags + '\',\'' + escape(d.result.price) + '\',\'' + escape(d.result.fee_percent) + '\');';
+				return 'M.ciniki_artgallery_exhibitionitems.itemedit.updateItem(\'' + s + '\',\'' + f + '\',\'' + escape(d.result.code) + '\',\'' + escape(d.result.name) + '\',\'' + escape(d.result.medium) + '\',\'' + escape(d.result.size) + '\',\'' + escape(d.result.item_condition) + '\',\'' + d.result.flags + '\',\'' + escape(d.result.price) + '\',\'' + escape(d.result.fee_percent) + '\');';
 			}
 		};
 		this.itemedit.updateItem = function(s, fid, code, name, medium, size, item_condition, flags, price, fee_percent) {

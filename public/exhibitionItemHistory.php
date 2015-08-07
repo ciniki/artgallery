@@ -46,6 +46,6 @@ function ciniki_artgallery_exhibitionItemHistory($ciniki) {
 	}
 
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistory');
-	return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.artgallery', 'ciniki_artgallery_exhibition_history', $args['business_id'], 'ciniki_artgallery_exhibition_items', $args['item_id'], $args['field']);
+	return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.artgallery', 'ciniki_artgallery_history', $args['business_id'], 'ciniki_artgallery_exhibition_items', $args['item_id'], $args['field']);
 }
 ?>
