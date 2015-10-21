@@ -233,6 +233,8 @@ function ciniki_artgallery_exhibitionList($ciniki) {
 		) {
 		$strsql = "SELECT ciniki_artgallery_exhibition_items.customer_id, "
 			. "IFNULL(ciniki_customers.display_name, '') AS display_name, "
+			. "IFNULL(ciniki_customers.first, '') AS first, "
+			. "IFNULL(ciniki_customers.last, '') AS last, "
 			. "COUNT(DISTINCT ciniki_artgallery_exhibition_items.exhibition_id) AS num_exhibitions "
 			. "FROM ciniki_artgallery_exhibition_items "
 			. "LEFT JOIN ciniki_customers ON ("
@@ -246,7 +248,7 @@ function ciniki_artgallery_exhibitionList($ciniki) {
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
 			array('container'=>'sellers', 'fname'=>'customer_id', 'name'=>'customer',
-				'fields'=>array('id'=>'customer_id', 'display_name', 'num_exhibitions')),
+				'fields'=>array('id'=>'customer_id', 'display_name', 'first', 'last', 'num_exhibitions')),
 			));
 		if( isset($rc['sellers']) ) {
 			$rsp['sellers'] = $rc['sellers'];

@@ -199,6 +199,8 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
 		) {
 		$strsql = "SELECT ciniki_artgallery_exhibition_items.customer_id, "
 			. "IFNULL(ciniki_customers.display_name, '') AS display_name, "
+			. "IFNULL(ciniki_customers.first, '') AS first, "
+			. "IFNULL(ciniki_customers.last, '') AS last, "
 			. "COUNT(ciniki_artgallery_exhibition_items.id) AS num_items, "
 			. "SUM(ciniki_artgallery_exhibition_items.price) AS total_price, "
 			. "SUM(ciniki_artgallery_exhibition_items.business_fee) AS total_business_fee, "
@@ -215,7 +217,7 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
 			array('container'=>'sellers', 'fname'=>'customer_id', 'name'=>'seller',
-				'fields'=>array('id'=>'customer_id', 'display_name', 'num_items',
+				'fields'=>array('id'=>'customer_id', 'display_name', 'first', 'last', 'num_items',
 					'total_price', 'total_business_fee', 'total_seller_amount')),
 			));
 		if( $rc['stat'] != 'ok' ) {
