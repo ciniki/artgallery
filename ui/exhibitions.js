@@ -115,7 +115,7 @@ function ciniki_artgallery_exhibitions() {
 		this.exhibition.data = {};
 		this.exhibition.exhibition_id = 0;
 		this.exhibition.sections = {
-			'_image':{'label':'', 'aside':'yes', 'fields':{
+			'_image':{'label':'', 'aside':'yes', 'type':'imageform', 'fields':{
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'history':'no'},
 				}},
 			'info':{'label':'', 'aside':'yes', 'list':{
@@ -268,7 +268,7 @@ function ciniki_artgallery_exhibitions() {
 		this.edit.data = {};
 		this.edit.exhibition_id = 0;
 		this.edit.sections = {
-			'_image':{'label':'', 'aside':'yes', 'fields':{
+			'_image':{'label':'', 'aside':'yes', 'type':'imageform', 'fields':{
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'controls':'all', 'history':'no'},
 			}},
 			'info':{'label':'', 'aside':'yes', 'fields':{
