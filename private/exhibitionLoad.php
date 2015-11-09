@@ -122,7 +122,7 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
 			. "image_id, "
 			. "description, "
 			. "url, "
-			. "UNIX_TIMESTAMP(last_updated) AS last_updated "
+			. "last_updated "
 			. "FROM ciniki_artgallery_exhibition_images "
 			. "WHERE ciniki_artgallery_exhibition_images.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. "AND ciniki_artgallery_exhibition_images.exhibition_id = '" . ciniki_core_dbQuote($ciniki, $exhibition_id) . "' "
@@ -130,7 +130,9 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
 			array('container'=>'images', 'fname'=>'id', 'name'=>'image',
-				'fields'=>array('id', 'name', 'permalink', 'reddot', 'webflags', 'sequence', 'image_id', 'description', 'url', 'last_updated')),
+				'fields'=>array('id', 'name', 'permalink', 'reddot', 'webflags', 'sequence', 'image_id', 'description', 'url', 'last_updated'),
+				'utctots'=>array('last_updated'),
+				),
 			));
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;
