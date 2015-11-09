@@ -30,6 +30,7 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
 		. "ciniki_artgallery_exhibition_images.image_id, "
 		. "ciniki_artgallery_exhibition_images.name AS image_name, "
 		. "ciniki_artgallery_exhibition_images.permalink AS image_permalink, "
+		. "IF((ciniki_artgallery_exhibition_images.flags&0x01)=1, 'yes', 'no') AS image_sold, "
 		. "ciniki_artgallery_exhibition_images.description AS image_description, "
 		. "ciniki_artgallery_exhibition_images.url AS image_url, "
 		. "UNIX_TIMESTAMP(ciniki_artgallery_exhibition_images.last_updated) AS image_last_updated "
@@ -51,7 +52,7 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
 				'description'=>'long_description')),
 		array('container'=>'images', 'fname'=>'image_id', 
 			'fields'=>array('image_id', 'title'=>'image_name', 'permalink'=>'image_permalink',
-				'description'=>'image_description', 'short_description', 'url'=>'image_url',
+				'description'=>'image_description', 'short_description', 'sold'=>'image_sold', 'url'=>'image_url',
 				'last_updated'=>'image_last_updated')),
 		));
 	if( $rc['stat'] != 'ok' ) {

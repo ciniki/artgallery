@@ -21,6 +21,7 @@ function ciniki_artgallery_exhibitionImageAdd(&$ciniki) {
         'name'=>array('required'=>'no', 'blank'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Title'), 
         'permalink'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Permalink'), 
         'sequence'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Sequence'), 
+        'flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Flags'), 
         'webflags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Website Flags'), 
 		'image_id'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Image'),
         'description'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Description'), 

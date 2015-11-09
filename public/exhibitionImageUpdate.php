@@ -26,6 +26,7 @@ function ciniki_artgallery_exhibitionImageUpdate(&$ciniki) {
         'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Title'), 
         'permalink'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Permalink'), 
         'sequence'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Sequence'), 
+        'flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Flags'), 
         'webflags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Website Flags'), 
         'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'), 
         'url'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'URL'), 

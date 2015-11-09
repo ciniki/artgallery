@@ -1,0 +1,5 @@
+#
+# Add the column to store options for the image.
+#
+ALTER TABLE ciniki_artgallery_exhibition_images ADD COLUMN flags tinyint unsigned not null AFTER permalink;
+ALTER TABLE ciniki_artgallery_exhibition_images COMMENT='v1.03';

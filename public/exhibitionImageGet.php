@@ -47,6 +47,7 @@ function ciniki_artgallery_exhibitionImageGet($ciniki) {
 	$strsql = "SELECT ciniki_artgallery_exhibition_images.id, "
 		. "ciniki_artgallery_exhibition_images.name, "
 		. "ciniki_artgallery_exhibition_images.permalink, "
+		. "ciniki_artgallery_exhibition_images.flags, "
 		. "ciniki_artgallery_exhibition_images.webflags, "
 		. "ciniki_artgallery_exhibition_images.image_id, "
 		. "ciniki_artgallery_exhibition_images.description, "
@@ -58,7 +59,7 @@ function ciniki_artgallery_exhibitionImageGet($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
 		array('container'=>'images', 'fname'=>'id', 'name'=>'image',
-			'fields'=>array('id', 'name', 'permalink', 'webflags', 'image_id', 'description', 'url',)),
+			'fields'=>array('id', 'name', 'permalink', 'flags', 'webflags', 'image_id', 'description', 'url',)),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;

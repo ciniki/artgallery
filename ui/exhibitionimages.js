@@ -2,6 +2,9 @@
 // The app to add/edit artgallery exhibit images
 //
 function ciniki_artgallery_exhibitionimages() {
+	this.flags = {
+		'1':{'name':'Sold'},
+		};
 	this.webFlags = {
 		'1':{'name':'Hidden'},
 		};
@@ -21,6 +24,7 @@ function ciniki_artgallery_exhibitionimages() {
 			}},
 			'info':{'label':'Information', 'type':'simpleform', 'fields':{
 				'name':{'label':'Title', 'type':'text'},
+				'flags':{'label':'Options', 'type':'flags', 'join':'yes', 'flags':this.flags},
 				'webflags':{'label':'Website', 'type':'flags', 'join':'yes', 'flags':this.webFlags},
 			}},
 			'_description':{'label':'Description', 'type':'simpleform', 'fields':{

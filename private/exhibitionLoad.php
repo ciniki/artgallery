@@ -113,7 +113,16 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
 	// Load images for exhibition if requested
 	//
 	if( isset($exhibition_id) && $exhibition_id > 0 && isset($args['images']) && $args['images'] == 'yes' ) {
-		$strsql = "SELECT id, name, permalink, webflags, sequence, image_id, description, url "
+		$strsql = "SELECT id, "
+			. "name, "
+			. "permalink, "
+			. "IF((flags&0x01)=1,'yes','no') AS reddot, "
+			. "webflags, "
+			. "sequence, "
+			. "image_id, "
+			. "description, "
+			. "url, "
+			. "UNIX_TIMESTAMP(last_updated) AS last_updated "
 			. "FROM ciniki_artgallery_exhibition_images "
 			. "WHERE ciniki_artgallery_exhibition_images.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. "AND ciniki_artgallery_exhibition_images.exhibition_id = '" . ciniki_core_dbQuote($ciniki, $exhibition_id) . "' "
@@ -121,7 +130,7 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
 			array('container'=>'images', 'fname'=>'id', 'name'=>'image',
-				'fields'=>array('id', 'name', 'permalink', 'webflags', 'sequence', 'image_id', 'description', 'url')),
+				'fields'=>array('id', 'name', 'permalink', 'reddot', 'webflags', 'sequence', 'image_id', 'description', 'url', 'last_updated')),
 			));
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;
@@ -131,10 +140,11 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
 			//
 			// Include the image thumbnails in the returned data
 			//
-			ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'private', 'loadCacheThumbnail');
+			ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'hooks', 'loadThumbnail');
 			foreach($rsp['exhibition']['images'] as $img_id => $img) {
 				if( isset($img['image']['image_id']) && $img['image']['image_id'] > 0 ) {
-					$rc = ciniki_images_loadCacheThumbnail($ciniki, $business_id, $img['image']['image_id'], 75);
+					$rc = ciniki_images_hooks_loadThumbnail($ciniki, $business_id, array('image_id'=>$img['image']['image_id'], 
+						'maxlength'=>75, 'last_updated'=>$img['image']['last_updated'], 'reddot'=>$img['image']['reddot']));
 					if( $rc['stat'] != 'ok' ) {
 						return $rc;
 					}
