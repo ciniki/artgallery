@@ -58,7 +58,7 @@ function ciniki_artgallery_exhibitionDuplicate(&$ciniki) {
     // check permission to run this function for this business
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'private', 'checkAccess');
-    $rc = ciniki_artgallery_checkAccess($ciniki, $args['business_id'], 'ciniki.artgallery.exhibitionAdd'); 
+    $rc = ciniki_artgallery_checkAccess($ciniki, $args['business_id'], 'ciniki.artgallery.exhibitionDuplicate'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
