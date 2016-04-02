@@ -54,11 +54,11 @@ function ciniki_artgallery_settingsGet($ciniki) {
 	if( isset($args['processhtml']) && $args['processhtml'] == 'yes' ) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processContent');
 		if( isset($settings['membership-details']) ) {
-			$rc = ciniki_web_processContent($ciniki, $settings['membership-details']);
+			$rc = ciniki_web_processContent($ciniki, array(), $settings['membership-details']);
 			$settings['membership-details-html'] = $rc['content'];
 		}
 		if( isset($settings['exhibition-application-details']) ) {
-			$rc = ciniki_web_processContent($ciniki, $settings['exhibition-application-details']);
+			$rc = ciniki_web_processContent($ciniki, array(), $settings['exhibition-application-details']);
 			$settings['exhibition-application-details-html'] = $rc['content'];
 		}
 	}
