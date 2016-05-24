@@ -394,7 +394,7 @@ function ciniki_artgallery_exhibitions() {
 		// Check if locations or exhibition inventory is 
 		//
 		if( M.curBusiness.modules['ciniki.artgallery'] != null 
-			&& (M.curBusiness.modules['ciniki.artgallery'].flags&0x07) > 0 ) {
+			&& (M.curBusiness.modules['ciniki.artgallery'].flags&0x05) > 0 ) {
 			this.menu.size = 'medium mediumaside';
 			var tab_count = 0;
 			if( (M.curBusiness.modules['ciniki.artgallery'].flags&0x02) > 0 ) {
