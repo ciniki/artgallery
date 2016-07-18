@@ -5,49 +5,49 @@
 #
 # Fields
 # ------
-# id:					The ID of the exhibition.
-# uuid:					The Universal Unique ID of the exhibition
-# business_id:			The ID of the business the exhibition is part of.
+# id:                   The ID of the exhibition.
+# uuid:                 The Universal Unique ID of the exhibition
+# business_id:          The ID of the business the exhibition is part of.
 #
-# name:					The name of the exhibition.
-# permalink:			The permalink for the exhibition.
-# webflags:				The flags for displaying on the website.
+# name:                 The name of the exhibition.
+# permalink:            The permalink for the exhibition.
+# webflags:             The flags for displaying on the website.
 #
-#						0x01 - Hidden, do not show on the website.
+#                       0x01 - Hidden, do not show on the website.
 #
-# start_date:			The start date of the exhibition
-# end_date:				The end date of the exhibition
-# primary_image_id:		The ID of the image for the exhibition.
+# start_date:           The start date of the exhibition
+# end_date:             The end date of the exhibition
+# primary_image_id:     The ID of the image for the exhibition.
 #
-# location_code:		A shortform code for use internally of the exhibition location.
-# location_id:			The ID of the location in the ciniki_artgallery_locations table.
-# location:				The location or room in the gallery (optional)
+# location_code:        A shortform code for use internally of the exhibition location.
+# location_id:          The ID of the location in the ciniki_artgallery_locations table.
+# location:             The location or room in the gallery (optional)
 #
-# short_description:	The short description of the exhibition, which 
-#						will be displayed in listings.
-# long_description:		The full description used for the info page about the exhibition.
+# short_description:    The short description of the exhibition, which 
+#                       will be displayed in listings.
+# long_description:     The full description used for the info page about the exhibition.
 #
-# date_added:		The UTC date and time the exhibition was added.
-# last_updated:		The UTC date and time the exhibition was updated.
+# date_added:       The UTC date and time the exhibition was added.
+# last_updated:     The UTC date and time the exhibition was updated.
 #
 create table ciniki_artgallery_exhibitions (
-	id int not null auto_increment,
-	uuid char(36) not null,
-	business_id int not null,
-	name varchar(150) not null,
-	permalink varchar(250) not null,
-	webflags tinyint not null,
-	start_date date not null,
-	end_date date not null,
-	primary_image_id int not null,
-	location_code varchar(50) not null,
-	location_id int not null,
-	location varchar(150) not null,
-	short_description text not null,
-	long_description text not null,
-	date_added datetime not null,
-	last_updated datetime not null,
-	primary key (id),
-	unique index (business_id, permalink),
-	index sync (uuid, last_updated)
+    id int not null auto_increment,
+    uuid char(36) not null,
+    business_id int not null,
+    name varchar(150) not null,
+    permalink varchar(250) not null,
+    webflags tinyint not null,
+    start_date date not null,
+    end_date date not null,
+    primary_image_id int not null,
+    location_code varchar(50) not null,
+    location_id int not null,
+    location varchar(150) not null,
+    short_description text not null,
+    long_description text not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (business_id, permalink),
+    index sync (uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.02';

@@ -14,36 +14,36 @@ function ciniki_artgallery_exhibitionLinkAdd(&$ciniki) {
     //  
     // Find all the required and optional arguments
     //  
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'exhibition_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Exhibition'), 
         'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Title'), 
-		'url'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'URL'),
+        'url'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'URL'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
     $args = $rc['args'];
 
-	if( $args['exhibition_id'] <= 0 ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1112', 'msg'=>'No exhibition specified'));
-	}
+    if( $args['exhibition_id'] <= 0 ) {
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1112', 'msg'=>'No exhibition specified'));
+    }
     
     //  
     // Make sure this module is activated, and
     // check permission to run this function for this business
     //  
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'private', 'checkAccess');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'private', 'checkAccess');
     $rc = ciniki_artgallery_checkAccess($ciniki, $args['business_id'], 'ciniki.artgallery.exhibitionLinkAdd'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
 
-	//
-	// Add the link
-	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-	return ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition_link', $args, 0x07);
+    //
+    // Add the link
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
+    return ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition_link', $args, 0x07);
 }
 ?>
