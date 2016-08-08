@@ -45,6 +45,7 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $business_id, 
             . "LEFT JOIN ciniki_artgallery_exhibitions ON ("
                 . "ciniki_artgallery_exhibition_tags.exhibition_id = ciniki_artgallery_exhibitions.id "
                 . "AND ciniki_artgallery_exhibitions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND (ciniki_artgallery_exhibitions.webflags&0x01) = 0 "
                 . ") "
             . $location_sql
             . "LEFT JOIN ciniki_artgallery_exhibition_images ON ("
