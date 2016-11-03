@@ -51,7 +51,7 @@ function ciniki_artgallery_locationDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['location']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2265', 'msg'=>'Unable to find existing item'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.36', 'msg'=>'Unable to find existing item'));
     }
     $location_uuid = $rc['location']['uuid'];
 
@@ -69,7 +69,7 @@ function ciniki_artgallery_locationDelete(&$ciniki) {
         return $rc;
     }
     if( isset($rc['num']['exhibitions']) && $rc['num']['exhibitions'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2262', 'msg'=>'There are still exhibitions at this location, they need to be removed or their locations changed before you can remove this location.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.37', 'msg'=>'There are still exhibitions at this location, they need to be removed or their locations changed before you can remove this location.'));
     }
 
     //

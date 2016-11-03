@@ -84,7 +84,7 @@ function ciniki_artgallery_locationGet($ciniki) {
             return $rc;
         }
         if( !isset($rc['locations']) ) {
-            return array('stat'=>'ok', 'err'=>array('pkg'=>'ciniki', 'code'=>'2263', 'msg'=>'Unable to find location.'));
+            return array('stat'=>'ok', 'err'=>array('code'=>'ciniki.artgallery.38', 'msg'=>'Unable to find location.'));
         }
         $rsp['location'] = $rc['locations'][0]['location'];
     } else {

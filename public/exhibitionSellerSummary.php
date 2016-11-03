@@ -82,7 +82,7 @@ function ciniki_artgallery_exhibitionSellerSummary($ciniki) {
         return $rc;
     }
     if( !isset($rc['exhibition']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2200', 'msg'=>'Market does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.23', 'msg'=>'Market does not exist'));
     }
     $exhibition_name = $rc['exhibition']['name'];
 

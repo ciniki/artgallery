@@ -34,13 +34,13 @@ function ciniki_artgallery_hooks_customerMerge($ciniki, $business_id, $args) {
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.artgallery', 'items');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2360', 'msg'=>'Unable to find exhibition items', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.1', 'msg'=>'Unable to find exhibition items', 'err'=>$rc['err']));
     }
     $items = $rc['rows'];
     foreach($items as $i => $row) {
         $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.artgallery.exhibition_item', $row['id'], array('customer_id'=>$args['primary_customer_id']), 0x04);
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2361', 'msg'=>'Unable to update exhibition items.', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.2', 'msg'=>'Unable to update exhibition items.', 'err'=>$rc['err']));
         }
         $updated++;
     }

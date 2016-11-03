@@ -74,7 +74,7 @@ function ciniki_artgallery_exhibitionUpdate(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['exhibition']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2471', 'msg'=>'That exhibition does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.24', 'msg'=>'That exhibition does not exist'));
     }
     $exhibition = $rc['exhibition'];
 
@@ -143,7 +143,7 @@ function ciniki_artgallery_exhibitionUpdate(&$ciniki) {
             return $rc;
         }
         if( $rc['num_rows'] > 0 ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1130', 'msg'=>'You already have an exhibition with this name, please choose another name.'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.25', 'msg'=>'You already have an exhibition with this name, please choose another name.'));
         }
     }
 

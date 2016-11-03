@@ -46,7 +46,7 @@ function ciniki_artgallery_exhibitionImageDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['item']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1255', 'msg'=>'Exhibition image does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.12', 'msg'=>'Exhibition image does not exist'));
     }
     $item = $rc['item'];
 

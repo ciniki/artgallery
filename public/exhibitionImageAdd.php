@@ -73,11 +73,11 @@ function ciniki_artgallery_exhibitionImageAdd(&$ciniki) {
         return $rc;
     }
     if( $rc['num_rows'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1121', 'msg'=>'You already have an image with this name, please choose another name'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.10', 'msg'=>'You already have an image with this name, please choose another name'));
     }
 
     if( $args['exhibition_id'] <= 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1120', 'msg'=>'No exhibition specified'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.11', 'msg'=>'No exhibition specified'));
     }
 
     //

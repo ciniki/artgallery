@@ -121,7 +121,7 @@ function ciniki_artgallery_exhibitionAdd(&$ciniki) {
         return $rc;
     }
     if( $rc['num_rows'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1128', 'msg'=>'You already have a exhibition with this name, please choose another name'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.6', 'msg'=>'You already have a exhibition with this name, please choose another name'));
     }
 
     //

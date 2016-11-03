@@ -84,7 +84,7 @@ function ciniki_artgallery_exhibitionPriceList($ciniki) {
         return $rc;
     }
     if( !isset($rc['exhibition']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2235', 'msg'=>'Exhibition does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.22', 'msg'=>'Exhibition does not exist'));
     }
     $exhibition_name = $rc['exhibition']['name'];
 

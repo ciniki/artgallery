@@ -219,7 +219,7 @@ function ciniki_artgallery_exhibitionList($ciniki) {
             return $rc;
         }
         if( !isset($rc['locations']) ) {
-            return array('stat'=>'ok', 'err'=>array('pkg'=>'ciniki', 'code'=>'2365', 'msg'=>'Unable to find location.'));
+            return array('stat'=>'ok', 'err'=>array('code'=>'ciniki.artgallery.21', 'msg'=>'Unable to find location.'));
         }
         $rsp['location'] = $rc['locations'][0]['location'];
     }

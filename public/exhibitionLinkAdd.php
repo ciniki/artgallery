@@ -27,7 +27,7 @@ function ciniki_artgallery_exhibitionLinkAdd(&$ciniki) {
     $args = $rc['args'];
 
     if( $args['exhibition_id'] <= 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1112', 'msg'=>'No exhibition specified'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.18', 'msg'=>'No exhibition specified'));
     }
     
     //  

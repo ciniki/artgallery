@@ -60,7 +60,7 @@ function ciniki_artgallery_exhibitionLinkGet($ciniki) {
         return $rc;
     }
     if( !isset($rc['links']) ) {
-        return array('stat'=>'ok', 'err'=>array('pkg'=>'ciniki', 'code'=>'1114', 'msg'=>'Unable to find link'));
+        return array('stat'=>'ok', 'err'=>array('code'=>'ciniki.artgallery.20', 'msg'=>'Unable to find link'));
     }
     $link = $rc['links'][0]['link'];
     

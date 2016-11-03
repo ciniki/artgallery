@@ -59,7 +59,7 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
         return $rc;
     }
     if( !isset($rc['exhibitions']) || count($rc['exhibitions']) < 1 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1119', 'msg'=>'Unable to find exhibition'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.40', 'msg'=>'Unable to find exhibition'));
     }
     $exhibition = array_pop($rc['exhibitions']);
 

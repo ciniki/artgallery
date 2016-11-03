@@ -65,7 +65,7 @@ function ciniki_artgallery_exhibitionImageGet($ciniki) {
         return $rc;
     }
     if( !isset($rc['images']) ) {
-        return array('stat'=>'ok', 'err'=>array('pkg'=>'ciniki', 'code'=>'1124', 'msg'=>'Unable to find image'));
+        return array('stat'=>'ok', 'err'=>array('code'=>'ciniki.artgallery.13', 'msg'=>'Unable to find image'));
     }
     $image = $rc['images'][0]['image'];
     

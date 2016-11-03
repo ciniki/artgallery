@@ -63,7 +63,7 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
             return $rc;
         }
         if( !isset($rc['exhibitions']) ) {
-            return array('stat'=>'ok', 'err'=>array('pkg'=>'ciniki', 'code'=>'1118', 'msg'=>'Unable to find exhibition'));
+            return array('stat'=>'ok', 'err'=>array('code'=>'ciniki.artgallery.5', 'msg'=>'Unable to find exhibition'));
         }
         $rsp['exhibition'] = $rc['exhibitions'][0]['exhibition'];
     } else {

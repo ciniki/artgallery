@@ -92,7 +92,7 @@ function ciniki_artgallery_exhibitionItemGet($ciniki) {
         return $rc;
     }
     if( !isset($rc['items']) || !isset($rc['items'][0]) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2230', 'msg'=>'Unable to find item'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.17', 'msg'=>'Unable to find item'));
     }
     $item = $rc['items'][0]['item'];
 

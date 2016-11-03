@@ -46,7 +46,7 @@ function ciniki_artgallery_exhibitionLinkDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['item']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1123', 'msg'=>'Exhibition link does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.19', 'msg'=>'Exhibition link does not exist'));
     }
     $item = $rc['item'];
 
