@@ -39,7 +39,7 @@ function ciniki_artgallery_exhibitionImageUpdate(&$ciniki) {
     //
     // Get the existing image details
     //
-    $strsql = "SELECT uuid FROM ciniki_artgallery_exhibition_images "
+    $strsql = "SELECT uuid, exhibition_id FROM ciniki_artgallery_exhibition_images "
         . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['exhibition_image_id']) . "' "
         . "";
@@ -65,6 +65,7 @@ function ciniki_artgallery_exhibitionImageUpdate(&$ciniki) {
         $strsql = "SELECT id, name, permalink FROM ciniki_artgallery_exhibition_images "
             . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
             . "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
+            . "AND exhibition_id = '" . ciniki_core_dbQuote($ciniki, $item['exhibition_id']) . "' "
             . "AND id <> '" . ciniki_core_dbQuote($ciniki, $args['exhibition_image_id']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.artgallery', 'image');
