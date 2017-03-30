@@ -137,8 +137,8 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
     elseif( isset($args['uri_split'][0]) && $args['uri_split'][0] != '' 
         ) {
         $exhibition_permalink = $args['uri_split'][0];
-        $image_permalink = $args['uri_split'][2];
-        $gallery_url = $args['base_url'] . "/exhibitions/" . $exhibition_permalink . "/gallery";
+        $gallery_url = $args['base_url'] . "/" . $exhibition_permalink . "/gallery";
+        $ciniki['response']['head']['og']['url'] .= '/' . $exhibition_permalink;
 
         //
         // Load the exhibition to get all the details, and the list of images.
@@ -152,144 +152,12 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
         }
         $exhibition = $rc['exhibition'];
 
-        if( isset($args['uri_split'][1]) && $args['uri_split'][1] == 'gallery' 
-            && isset($args['uri_split'][2]) && $args['uri_split'][2] != '' 
-            ) {
-            $ciniki['response']['head']['og']['url'] .= '/' . $exhibition_permalink;
-
-        } else {
-
-        }
-
-
-        if( isset($exhibition['image_id']) && $exhibition['image_id'] > 0 ) {
-            ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'getScaledImageURL');
-            $rc = ciniki_web_getScaledImageURL($ciniki, $exhibition['image_id'], 'original', '500', 0);
-            if( $rc['stat'] != 'ok' ) {
-                return $rc;
-            }
-            $ciniki['response']['head']['og']['image'] = $rc['domain_url'];
-        }
         if( isset($exhibition['short_description']) && $exhibition['short_description'] != '' ) {
             $ciniki['response']['head']['og']['description'] = strip_tags($exhibition['short_description']);
         } elseif( isset($exhibition['description']) && $exhibition['description'] != '' ) {
             $ciniki['response']['head']['og']['description'] = strip_tags($exhibition['description']);
         }
-        
-        if( !isset($exhibition['images']) || count($exhibition['images']) < 1 ) {
-            return array('stat'=>'404', 'err'=>array('code'=>'ciniki.web.46', 'msg'=>"I'm sorry, but we can't seem to find the image your requested."));
-        }
 
-        $first = NULL;
-        $last = NULL;
-        $img = NULL;
-        $next = NULL;
-        $prev = NULL;
-        foreach($exhibition['images'] as $iid => $image) {
-            if( $first == NULL ) {
-                $first = $image;
-            }
-            if( $image['permalink'] == $image_permalink ) {
-                $img = $image;
-            } elseif( $next == NULL && $img != NULL ) {
-                $next = $image;
-            } elseif( $img == NULL ) {
-                $prev = $image;
-            }
-            $last = $image;
-        }
-
-        if( count($exhibition['images']) == 1 ) {
-            $prev = NULL;
-            $next = NULL;
-        } elseif( $prev == NULL ) {
-            // The requested image was the first in the list, set previous to last
-            $prev = $last;
-        } elseif( $next == NULL ) {
-            // The requested image was the last in the list, set previous to last
-            $next = $first;
-        }
-        
-        $page_title = $exhibition['name'] . ' - ' . $img['title'];
-        $article_title = "<a href='" . $args['base_url'] . "/exhibitions/" . $exhibition['permalink'] . "'>" . $exhibition['name'] . "</a>";
-        if( $img['title'] != '' ) {
-            $page_title .= ' - ' . $img['title'];
-            $article_title .= ' - ' . $img['title'];
-        }
-    
-        if( $img == NULL || $img['image_id'] <= 0 ) {
-            return array('stat'=>'404', 'err'=>array('code'=>'ciniki.web.47', 'msg'=>"I'm sorry, but we can't seem to find the image your requested."));
-        }
-    
-        //
-        // Load the image
-        //
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'getScaledImageURL');
-        $rc = ciniki_web_getScaledImageURL($ciniki, $img['image_id'], 'original', 0, 600);
-        if( $rc['stat'] != 'ok' ) {
-            return $rc;
-        }
-        $img_url = $rc['url'];
-
-        //
-        // Set the page to wide if possible
-        //
-        $ciniki['request']['page-container-class'] = 'page-container-wide';
-
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'generateGalleryJavascript');
-        $rc = ciniki_web_generateGalleryJavascript($ciniki, $next, $prev);
-        if( $rc['stat'] != 'ok' ) {
-            return $rc;
-        }
-        $ciniki['request']['inline_javascript'] = $rc['javascript'];
-
-        $ciniki['request']['onresize'] = "gallery_resize_arrows();";
-        $ciniki['request']['onload'] = "scrollto_header();";
-        $page_content .= "<article class='page'>\n"
-            . "<header class='entry-title'><h1 id='entry-title' class='entry-title'>$article_title</h1></header>\n"
-            . "<div class='entry-content'>\n"
-            . "";
-        $page_content .= "<div id='gallery-image' class='gallery-image'>";
-        $page_content .= "<div id='gallery-image-wrap' class='gallery-image-wrap'>";
-        if( $prev != null ) {
-            $page_content .= "<a id='gallery-image-prev' class='gallery-image-prev' href='$gallery_url/" . $prev['permalink'] . "'><div id='gallery-image-prev-img'></div></a>";
-        }
-        if( $next != null ) {
-            $page_content .= "<a id='gallery-image-next' class='gallery-image-next' href='$gallery_url/" . $next['permalink'] . "'><div id='gallery-image-next-img'></div></a>";
-        }
-        $page_content .= "<img id='gallery-image-img' title='" . htmlspecialchars(strip_tags($img['title'])) . "' alt=\"" . htmlspecialchars(strip_tags($img['title'])) . "\" src='" . $img_url . "' onload='javascript: gallery_resize_arrows();' />";
-        $page_content .= "</div><br/>"
-            . "<div id='gallery-image-details' class='gallery-image-details'>"
-            . "<span class='image-title'>" . $img['title'] . '</span>'
-            . "<span class='image-details'></span>";
-        if( $img['description'] != '' ) {
-            $page_content .= "<span class='image-description'>" . preg_replace('/\n/', '<br/>', $img['description']) . "</span>";
-        }
-        $page_content .= "</div></div>";
-        $page_content .= "</div></article>";
-    }
-
-    //
-    // Check if we are to display an exhibition
-    //
-    elseif( isset($args['uri_split'][0]) && $args['uri_split'][0] != '' 
-        && $args['uri_split'][0] != 'category' 
-        ) {
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'web', 'exhibitionDetails');
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processURL');
-
-        //
-        // Get the exhibitor information
-        //
-        $exhibition_permalink = $args['uri_split'][0];
-        $ciniki['response']['head']['og']['url'] .= '/' . $exhibition_permalink;
-        $rc = ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, 
-            $business_id, $exhibition_permalink);
-        if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'404', 'err'=>array('code'=>'ciniki.web.48', 'msg'=>"I'm sorry, but we can't seem to find the exhibition you requested."));
-        }
-        $exhibition = $rc['exhibition'];
-        // Format the date
         $exhibition_date = $exhibition['start_month'];
         $exhibition_date .= " " . $exhibition['start_day'];
         if( $exhibition['end_day'] != '' && ($exhibition['start_day'] != $exhibition['end_day'] || $exhibition['start_month'] != $exhibition['end_month']) ) {
@@ -301,175 +169,80 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
         }
         $exhibition_date .= ", " . $exhibition['start_year'];
         $page_title = $exhibition['name'];
-        $page_content .= "<article class='page'>\n"
-            . "<header class='entry-title'><h1 class='entry-title'>" . $exhibition['name'] . "</h1>"
-            . "<div class='entry-meta'>" . $exhibition_date . "</div>"
-            . "</header>\n"
-            . "";
+        $page['title'] = $exhibition['name'];
+        $page['meta_data'] = $exhibition_date;
 
-        //
-        // Add primary image
-        //
-        $aside_display = 'block';
-        if( isset($exhibition['image_id']) && $exhibition['image_id'] > 0 ) {
-            ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'getScaledImageURL');
-            $rc = ciniki_web_getScaledImageURL($ciniki, $exhibition['image_id'], 'original', '500', 0);
+        if( isset($args['uri_split'][1]) && $args['uri_split'][1] == 'gallery' && isset($args['uri_split'][2]) && $args['uri_split'][2] != '' ) {
+            if( !isset($exhibition['images']) || count($exhibition['images']) < 1 ) {
+                return array('stat'=>'404', 'err'=>array('code'=>'ciniki.web.46', 'msg'=>"I'm sorry, but we can't seem to find the image your requested."));
+            }
+
+            $image_permalink = $args['uri_split'][2];
+            $page['breadcrumbs'][] = array('name'=>$rc['img']['title'], 'url'=>$args['base_url'] . '/' . $exhibition_permalink . '/gallery/' . $image_permalink);
+            ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'galleryFindNextPrev');
+            $rc = ciniki_web_galleryFindNextPrev($ciniki, $exhibition['images'], $image_permalink);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
-            $ciniki['response']['head']['og']['image'] = $rc['domain_url'];
-            $page_content .= "<aside id='aside-image'><div class='image-wrap'><div class='image'>"
-                . "<img title='' alt='" . htmlspecialchars(strip_tags($exhibition['name'])) . "' src='" . $rc['url'] . "' />"
-                . "</div></div></aside>";
-            $aside_display = 'none';
-        } 
-        //
-        // No primary image, display a map to the location
-        //
-        if( isset($exhibition['location_details']['latitude']) && $exhibition['location_details']['latitude'] != 0
-            && isset($exhibition['location_details']['longitude']) && $exhibition['location_details']['longitude'] != 0
-            ) {
-            if( !isset($ciniki['request']['inline_javascript']) ) {
-                $ciniki['request']['inline_javascript'] = '';
-            }
-            $ciniki['request']['inline_javascript'] .= ''
-                . '<script type="text/javascript">'
-                . 'var gmap_loaded=0;'
-                . 'function gmap_initialize() {'
-                    . 'var myLatlng = new google.maps.LatLng(' . $exhibition['location_details']['latitude'] . ',' . $exhibition['location_details']['longitude'] . ');'
-                    . 'var mapOptions = {'
-                        . 'zoom: 13,'
-                        . 'center: myLatlng,'
-                        . 'panControl: false,'
-                        . 'zoomControl: true,'
-                        . 'scaleControl: true,'
-                        . 'mapTypeId: google.maps.MapTypeId.ROADMAP'
-                    . '};'
-                    . 'var map = new google.maps.Map(document.getElementById("googlemap"), mapOptions);'
-                    . 'var marker = new google.maps.Marker({'
-                        . 'position: myLatlng,'
-                        . 'map: map,'
-                        . 'title:"",'
-                        . '});'
-                . '};'
-                . 'function loadMap() {'
-                    . 'if(gmap_loaded==1) {return;}'
-                    . 'var script = document.createElement("script");'
-                    . 'script.type = "text/javascript";'
-                    . 'script.src = "' . ($ciniki['request']['ssl']=='yes'?'https':'http') . '://maps.googleapis.com/maps/api/js?key=' . $ciniki['config']['ciniki.web']['google.maps.api.key'] . '&sensor=false&callback=gmap_initialize";'
-                    . 'document.body.appendChild(script);'
-                    . 'gmap_loaded=1;'
-                . '};'
-                . 'function toggleMap() {'
-                    . "var i = document.getElementById('aside-image');\n"
-                    . "var m = document.getElementById('aside-map');\n"
-                    . "if(i!=null){"
-                        . "if(i.style.display!='none') {i.style.display='none';m.style.display='block'; loadMap();"
-                        . "} else {i.style.display='block';m.style.display='none'; "
-                        . "}\n"
-                    . "}"
-                . '};'
-                . ((!isset($exhibition['image_id']) || $exhibition['image_id'] == 0)?'window.onload=loadMap;':'')
-                . '</script>';
-            $page_content .= "<aside id='aside-map' style='display:${aside_display};'><div class='googlemap' id='googlemap'></div></aside>";
-        }
-
-        if( isset($exhibition['short_description']) && $exhibition['short_description'] != '' ) {
-            $ciniki['response']['head']['og']['description'] = strip_tags($exhibition['short_description']);
-        } elseif( isset($exhibition['description']) && $exhibition['description'] != '' ) {
-            $ciniki['response']['head']['og']['description'] = strip_tags($exhibition['description']);
-        }
-        
-        //
-        // Add description
-        //
-        if( isset($exhibition['description']) ) {
-            ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processContent');
-            $rc = ciniki_web_processContent($ciniki, $settings, $exhibition['description']);    
-            if( $rc['stat'] != 'ok' ) {
-                return $rc;
-            }
-            $page_content .= $rc['content'];
-        } elseif( isset($exhibition['short_description']) ) {
-            ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processContent');
-            $rc = ciniki_web_processContent($ciniki, $settings, $exhibition['short_description']);  
-            if( $rc['stat'] != 'ok' ) {
-                return $rc;
-            }
-            $page_content .= $rc['content'];
-        }
-
-        if( isset($exhibition['location_address']) && $exhibition['location_address'] != '' ) {
-            $page_content .= "<h2>Location</h2>";
-            $toggle_map = '';
-            if( isset($exhibition['image_id']) && $exhibition['image_id'] > 0 
-                && isset($exhibition['location_details']['latitude']) && $exhibition['location_details']['latitude'] != 0
-                && isset($exhibition['location_details']['longitude']) && $exhibition['location_details']['longitude'] != 0
-                ) {
-                $toggle_map = "<a href='javascript: toggleMap();'>map</a>";
-            }
-            if( isset($exhibition['location_details']['url']) && $exhibition['location_details']['url'] != '' ) {
-                $page_content .= "<p><a target='_blank' href='" . $exhibition['location_details']['url'] . "'>" . $exhibition['location_details']['name'] . '</a></br>';
-                $toggle_map .= ($toggle_map!=''?', ':'') . "<a target='_blank' href='" . $exhibition['location_details']['url'] . "'>website</a>";
+            if( $rc['img'] == NULL ) {
+                $page['blocks'][] = array('type'=>'message', 'section'=>'exhibition-image', 'content'=>"I'm sorry, but we can't seem to find the image you requested.");
             } else {
-                $page_content .= "<p>" . $exhibition['location_details']['name'] . '</br>';
-            }
-            $page_content .= $exhibition['location_address'] 
-                . ($toggle_map!=''?"(" . $toggle_map . ")":'')
-                . "</p>";
-        }
-
-        //
-        // Add the links if they exist
-        //
-        if( isset($exhibition['links']) && count($exhibition['links']) > 0 ) {
-            $page_content .= "<p>";
-            foreach($exhibition['links'] as $lid => $link) {
-                $rc = ciniki_web_processURL($ciniki, $link['url']);
-                if( $rc['stat'] != 'ok' ) {
-                    return $rc;
+                $page_title = $exhibition['name'] . ' - ' . $img['title'];
+                $page['breadcrumbs'][] = array('name'=>$rc['img']['title'], 'url'=>$args['base_url'] . '/' . $exhibition_permalink . '/gallery/' . $image_permalink);
+                if( $rc['img']['title'] != '' ) {
+                    $page['title'] .= ' - ' . $rc['img']['title'];
                 }
-                $url = $rc['url'];
-                $display_url = $rc['display'];
-                $page_content .= "<br/>" . $link['name'] . ": <a class='exhibitors-url' target='_blank' href='" . $url . "' title='" . $link['name'] . "'>" . $display_url . "</a>";
+                $block = array('type'=>'galleryimage', 'section'=>'exhibition-image', 'primary'=>'yes', 'image'=>$rc['img']);
+                if( $rc['prev'] != null ) {
+                    $block['prev'] = array('url'=>$args['base_url'] . '/' . $exhibition_permalink . '/gallery/' . $rc['prev']['permalink'], 'image_id'=>$rc['prev']['image_id']);
+                }
+                if( $rc['next'] != null ) {
+                    $block['next'] = array('url'=>$args['base_url'] . '/' . $exhibition_permalink . '/gallery/' . $rc['next']['permalink'], 'image_id'=>$rc['next']['image_id']);
+                }
+                $page['blocks'][] = $block;
             }
-            $page_content .= "</p>";
         } else {
-            $url = '';
-        }
+            if( isset($exhibition['image_id']) && $exhibition['image_id'] > 0 ) {
+                $page['blocks'][] = array('type'=>'asideimage', 'section'=>'primary-image', 'primary'=>'yes',
+                    'image_id'=>$exhibition['image_id'], 'title'=>$exhibition['name'], 'caption'=>'');
+            }
+            $content = '';
+            if( isset($exhibition['description']) && $exhibition['description'] != '' ) {
+                $content = $exhibition['description'];
+            } else {
+                $content = $exhibition['short_description'];
+            }
+            $page['blocks'][] = array('type'=>'content', 'section'=>'content', 'title'=>'', 'content'=>$content);
 
-        //
-        // Check if share buttons should be shown
-        //
-        if( !isset($settings['page-exhibitions-share-buttons']) 
-            || $settings['page-exhibitions-share-buttons'] == 'yes' ) {
-            ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processShareButtons');
-            $rc = ciniki_web_processShareButtons($ciniki, $settings, array(
-                'title'=>$page_title,
-                'tags'=>array('Exhibitions'),
-                ));
-            if( $rc['stat'] == 'ok' ) {
-                $page_content .= $rc['content'];
+            //
+            // Add the links if they exist
+            //
+            if( isset($exhibition['links']) && count($exhibition['links']) > 0 ) {
+                if( isset($event['links']) && count($event['links']) > 0 ) {
+                    $page['blocks'][] = array('type'=>'links', 'section'=>'links', 'title'=>'', 'links'=>$exhibition['links']);
+                }
+            }
+
+            //
+            // Check if share buttons should be shown
+            //
+            if( !isset($settings['page-exhibitions-share-buttons']) || $settings['page-exhibitions-share-buttons'] == 'yes' ) {
+                $tags = array('Exhibitions');
+                if( !isset($settings['page-events-share-buttons']) || $settings['page-events-share-buttons'] == 'yes' ) {
+                    $tags = array();
+                    $page['blocks'][] = array('type'=>'sharebuttons', 'section'=>'share', 'pagetitle'=>$page['title'], 'tags'=>$tags);
+                }
+            }
+            
+            //
+            // Add images if they exist
+            //
+            if( isset($exhibition['images']) && count($exhibition['images']) > 0 ) {
+                $page['blocks'][] = array('type'=>'gallery', 'section'=>'gallery', 'title'=>'Additional Images',
+                    'base_url'=>$args['base_url'] . "/" . $exhibition_permalink . "/gallery",
+                    'images'=>$exhibition['images']);
             }
         }
-        
-        //
-        // Add images if they exist
-        //
-        if( isset($exhibition['images']) && count($exhibition['images']) > 0 ) {
-            $page_content .= "<br style='clear: right;'/>";
-            $page_content .= "<h2>Gallery</h2>";
-            ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'generatePageGalleryThumbnails');
-            $img_base_url = $args['base_url'] . "/exhibitions/" . $exhibition['permalink'] . "/gallery";
-            $rc = ciniki_web_generatePageGalleryThumbnails($ciniki, $settings, $img_base_url, $exhibition['images'], 125);
-            if( $rc['stat'] != 'ok' ) {
-                return $rc;
-            }
-            $page_content .= "<div class='image-gallery'>" . $rc['content'] . "</div>";
-        }
-
-        $page_content .= "<br style='clear: right;'/>";
-        $page_content .= "</article>";
     }
 
     //
