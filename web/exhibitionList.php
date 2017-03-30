@@ -9,7 +9,7 @@
 // Returns
 // -------
 //
-function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $business_id, $args) {
+function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $business_id, $args, $format='') {
 
     $strsql = "SELECT ciniki_artgallery_exhibitions.id, "
         . "ciniki_artgallery_exhibitions.name, "
