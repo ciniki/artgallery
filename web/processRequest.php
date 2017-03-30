@@ -152,6 +152,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
         }
         $exhibition = $rc['exhibition'];
 
+        $page['breadcrumbs'][] = array('name'=>$exhibition['name'], 'url'=>$args['base_url'] . '/' . $exhibition_permalink);
         if( isset($exhibition['short_description']) && $exhibition['short_description'] != '' ) {
             $ciniki['response']['head']['og']['description'] = strip_tags($exhibition['short_description']);
         } elseif( isset($exhibition['description']) && $exhibition['description'] != '' ) {
