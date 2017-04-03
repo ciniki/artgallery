@@ -179,7 +179,6 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
             }
 
             $image_permalink = $args['uri_split'][2];
-            $page['breadcrumbs'][] = array('name'=>$rc['img']['title'], 'url'=>$args['base_url'] . '/' . $exhibition_permalink . '/gallery/' . $image_permalink);
             ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'galleryFindNextPrev');
             $rc = ciniki_web_galleryFindNextPrev($ciniki, $exhibition['images'], $image_permalink);
             if( $rc['stat'] != 'ok' ) {
