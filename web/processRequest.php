@@ -187,7 +187,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
             if( $rc['img'] == NULL ) {
                 $page['blocks'][] = array('type'=>'message', 'section'=>'exhibition-image', 'content'=>"I'm sorry, but we can't seem to find the image you requested.");
             } else {
-                $page_title = $exhibition['name'] . ' - ' . $img['title'];
+                $page_title = $exhibition['name'] . ' - ' . $rc['img']['title'];
                 $page['breadcrumbs'][] = array('name'=>$rc['img']['title'], 'url'=>$args['base_url'] . '/' . $exhibition_permalink . '/gallery/' . $image_permalink);
                 if( $rc['img']['title'] != '' ) {
                     $page['title'] .= ' - ' . $rc['img']['title'];
