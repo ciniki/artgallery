@@ -93,7 +93,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
     if( isset($args['uri_split'][0]) && $args['uri_split'][0] == 'exhibitionapplication' 
         && isset($settings['page-artgalleryexhibitions-application-details']) && $settings['page-artgalleryexhibitions-application-details'] == 'yes'
         ) {
-        $page['breadcrumbs'][] = array('url'=>$page['base_url'] . '/exhibitions', 'name'=>'Application');
+        $page['breadcrumbs'][] = array('url'=>$args['base_url'] . '/exhibitions', 'name'=>'Application');
         ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processContent');
         ciniki_core_loadMethod($ciniki, 'ciniki', 'info', 'web', 'pageDetails');
 //      $rc = ciniki_artgallery_web_exhibitionApplicationDetails($ciniki, $settings, $business_id);
@@ -262,8 +262,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
             return $rc;
         }
         $ciniki['response']['head']['og']['description'] = strip_tags('Upcoming Exhibitions');
-
-        if( isset($rc['content']['page-artgalleryexhibitions-content']) && $rc['content']['page-artgalleryexhibitions-content'] != '' ) {
+        if( $page_past_cur == 1 && isset($rc['content']['page-artgalleryexhibitions-content']) && $rc['content']['page-artgalleryexhibitions-content'] != '' ) {
             $page_content = '';
             if( isset($settings['page-artgalleryexhibitions-image']) 
                 && $settings['page-artgalleryexhibitions-image'] != '' 
