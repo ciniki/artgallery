@@ -49,7 +49,7 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
         array('container'=>'exhibitions', 'fname'=>'id', 
             'fields'=>array('id', 'name', 'location', 'location_id', 'permalink', 'image_id'=>'primary_image_id', 
                 'start_month', 'start_day', 'start_year', 'end_month', 'end_day', 'end_year',
-                'description'=>'long_description')),
+                'description'=>'long_description', 'short_description')),
         array('container'=>'images', 'fname'=>'image_id', 
             'fields'=>array('image_id', 'title'=>'image_name', 'permalink'=>'image_permalink',
                 'description'=>'image_description', 'short_description', 'sold'=>'image_sold', 'url'=>'image_url',
