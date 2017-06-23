@@ -270,7 +270,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
                 ) {
                 $page['blocks'][] = array('type'=>'asideimage', 'section'=>'primary-image', 'primary'=>'yes',
                     'image_id'=>$settings['page-artgalleryexhibitions-image'],
-                    'captions'=>$settings['page-artgalleryexhibitions-image-caption'],
+                    'captions'=>(isset($settings['page-artgalleryexhibitions-image-caption']) ? $settings['page-artgalleryexhibitions-image-caption'] : ''),
                     );
             }
             $content = $rc['content']['page-artgalleryexhibitions-content'];
