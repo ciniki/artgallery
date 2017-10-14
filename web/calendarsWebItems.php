@@ -28,6 +28,20 @@ function ciniki_artgallery_web_calendarsWebItems($ciniki, $settings, $business_i
     }
 
     //
+    // Check if colours specified
+    //
+    $style = '';
+    if( isset($settings['ciniki-artgallery-colour-background']) && $settings['ciniki-artgallery-colour-background'] != '' ) {
+        $style .= ($style != '' ? ' ':'') . 'background: ' . $settings['ciniki-artgallery-colour-background'] . ';';
+    }
+    if( isset($settings['ciniki-artgallery-colour-border']) && $settings['ciniki-artgallery-colour-border'] != '' ) {
+        $style .= ($style != '' ? ' ':'') . ' border: 1px solid ' . $settings['ciniki-artgallery-colour-border'] . ';';
+    }
+    if( isset($settings['ciniki-artgallery-colour-font']) && $settings['ciniki-artgallery-colour-font'] != '' ) {
+        $style .= ($style != '' ? ' ':'') . ' color: ' . $settings['ciniki-artgallery-colour-font'] . ';';
+    }
+
+    //
     // FIXME: Add select for tags to get other colours on web
     //
 
@@ -102,6 +116,7 @@ function ciniki_artgallery_web_calendarsWebItems($ciniki, $settings, $business_i
             $item = array(
                 'title'=>$prefix . $exhibition['title'],
                 'time_text'=>'',
+                'style'=>$style,
                 'url'=>$base_url . '/' . $exhibition['permalink'],
                 'classes'=>array('exhibitions'),
                 );

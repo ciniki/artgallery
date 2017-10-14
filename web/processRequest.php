@@ -78,7 +78,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
         $page_past_limit = intval($settings['page-artgalleryexhibitions-archive-number']);
     }
     if( isset($ciniki['request']['args']['page']) && $ciniki['request']['args']['page'] != '' && is_numeric($ciniki['request']['args']['page']) ) {
-        $page_past_cur = $ciniki['request']['args']['page'];
+        $page_past_cur = intval($ciniki['request']['args']['page']);
     } else {
         $page_past_cur = 1;
     }

@@ -33,7 +33,25 @@ function ciniki_artgallery_hooks_calendarsWebOptions(&$ciniki, $business_id, $ar
         'setting'=>'ciniki-artgallery-exhibition-prefix',
         'type'=>'text',
         'value'=>(isset($settings['ciniki-artgallery-exhibition-prefix'])?$settings['ciniki-artgallery-exhibition-prefix']:''),
-    );
+        );
+    $options[] = array(
+        'label'=>'Exhibitions Background Colour',
+        'setting'=>'ciniki-artgallery-colour-background', 
+        'type'=>'colour',
+        'value'=>(isset($settings['ciniki-artgallery-colour-background'])?$settings['ciniki-artgallery-colour-background']:'no'),
+        );
+    $options[] = array(
+        'label'=>'Exhibitions Border Colour',
+        'setting'=>'ciniki-artgallery-colour-border', 
+        'type'=>'colour',
+        'value'=>(isset($settings['ciniki-artgallery-colour-border'])?$settings['ciniki-artgallery-colour-border']:'no'),
+        );
+    $options[] = array(
+        'label'=>'Exhibitions Font Colour',
+        'setting'=>'ciniki-artgallery-colour-font', 
+        'type'=>'colour',
+        'value'=>(isset($settings['ciniki-artgallery-colour-font'])?$settings['ciniki-artgallery-colour-font']:'no'),
+        );
 
     return array('stat'=>'ok', 'options'=>$options);
 }
