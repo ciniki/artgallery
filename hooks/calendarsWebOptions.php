@@ -35,6 +35,12 @@ function ciniki_artgallery_hooks_calendarsWebOptions(&$ciniki, $business_id, $ar
         'value'=>(isset($settings['ciniki-artgallery-exhibition-prefix'])?$settings['ciniki-artgallery-exhibition-prefix']:''),
         );
     $options[] = array(
+        'label'=>'Exhibitions Legend Name',
+        'setting'=>'ciniki-artgallery-legend-title',
+        'type'=>'text',
+        'value'=>(isset($settings['ciniki-artgallery-legend-title'])?$settings['ciniki-artgallery-legend-title']:''),
+        );
+    $options[] = array(
         'label'=>'Exhibitions Background Colour',
         'setting'=>'ciniki-artgallery-colour-background', 
         'type'=>'colour',

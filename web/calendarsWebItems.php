@@ -42,6 +42,17 @@ function ciniki_artgallery_web_calendarsWebItems($ciniki, $settings, $business_i
     }
 
     //
+    // Setup the legend
+    //
+    if( isset($settings['ciniki-artgallery-legend-title']) && $settings['ciniki-artgallery-legend-title'] != '' ) {
+        $legend = array(
+            array('title'=>$settings['ciniki-artgallery-legend-title'], 'style'=>$style)
+            );
+    } else {
+        $legend = array();
+    }
+
+    //
     // FIXME: Add select for tags to get other colours on web
     //
 
@@ -149,6 +160,6 @@ function ciniki_artgallery_web_calendarsWebItems($ciniki, $settings, $business_i
         }
     }
 
-    return array('stat'=>'ok', 'items'=>$items);
+    return array('stat'=>'ok', 'items'=>$items, 'legend'=>$legend);
 }
 ?>
