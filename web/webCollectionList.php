@@ -9,7 +9,7 @@
 // Returns
 // -------
 //
-function ciniki_artgallery_web_webCollectionList($ciniki, $settings, $business_id, $args) {
+function ciniki_artgallery_web_webCollectionList($ciniki, $settings, $tnid, $args) {
 
     $strsql = "SELECT ciniki_artgallery_exhibitions.id, "
         . "ciniki_artgallery_exhibitions.name, "
@@ -30,7 +30,7 @@ function ciniki_artgallery_web_webCollectionList($ciniki, $settings, $business_i
         . "FROM ciniki_web_collection_objrefs "
         . "INNER JOIN ciniki_artgallery_exhibitions ON ("
             . "ciniki_web_collection_objrefs.object_id = ciniki_artgallery_exhibitions.id "
-            . "AND ciniki_artgallery_exhibitions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_artgallery_exhibitions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND (ciniki_artgallery_exhibitions.webflags&0x01) = 0 "
             . "";
         if( isset($args['type']) && $args['type'] == 'past' ) {
@@ -42,10 +42,10 @@ function ciniki_artgallery_web_webCollectionList($ciniki, $settings, $business_i
         }
     $strsql .= ") "
         . "LEFT JOIN ciniki_artgallery_exhibition_images ON (ciniki_artgallery_exhibitions.id = ciniki_artgallery_exhibition_images.exhibition_id "
-            . "AND ciniki_artgallery_exhibition_images.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_artgallery_exhibition_images.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
         . "WHERE ciniki_web_collection_objrefs.collection_id = '" . ciniki_core_dbQuote($ciniki, $args['collection_id']) . "' "
-        . "AND ciniki_web_collection_objrefs.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "AND ciniki_web_collection_objrefs.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_web_collection_objrefs.object = 'ciniki.artgallery.exhibition' "
         . "";
     if( isset($args['type']) && $args['type'] == 'past' ) {

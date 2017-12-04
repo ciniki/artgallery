@@ -75,7 +75,7 @@ function ciniki_artgallery_objects($ciniki) {
             'fee_percent'=>array(),
             'sell_date'=>array(),
             'sell_price'=>array(),
-            'business_fee'=>array(),
+            'tenant_fee'=>array(),
             'seller_amount'=>array(),
             'notes'=>array(),
             ),

@@ -7,7 +7,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to add the exhibition to.
+// tnid:         The ID of the tenant to add the exhibition to.
 // exhibition_image_id: The ID of the exhibition image to get.
 //
 // Returns
@@ -19,7 +19,7 @@ function ciniki_artgallery_exhibitionLinkGet($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'exhibition_link_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Exhibition Link'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -29,10 +29,10 @@ function ciniki_artgallery_exhibitionLinkGet($ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'private', 'checkAccess');
-    $rc = ciniki_artgallery_checkAccess($ciniki, $args['business_id'], 'ciniki.artgallery.exhibitionLinkGet'); 
+    $rc = ciniki_artgallery_checkAccess($ciniki, $args['tnid'], 'ciniki.artgallery.exhibitionLinkGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -48,7 +48,7 @@ function ciniki_artgallery_exhibitionLinkGet($ciniki) {
         . "ciniki_artgallery_exhibition_links.name, "
         . "ciniki_artgallery_exhibition_links.url "
         . "FROM ciniki_artgallery_exhibition_links "
-        . "WHERE ciniki_artgallery_exhibition_links.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_artgallery_exhibition_links.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_artgallery_exhibition_links.id = '" . ciniki_core_dbQuote($ciniki, $args['exhibition_link_id']) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');

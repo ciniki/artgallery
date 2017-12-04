@@ -8,7 +8,7 @@
 # ------
 # id:                   The ID of the exhibition link.
 # uuid:                 The Universal Unique ID of the exhibition link
-# business_id:          The ID of the business the exhibition is part of.
+# tnid:                 The ID of the tenant the exhibition is part of.
 #
 # exhibition_id:        The ID of the exhibition the images is for.
 # customer_id:          The ID of the customer or member who is showing/selling their work.
@@ -33,8 +33,8 @@
 # sell_price:           The price the item sold for. This may be different than the listed price if was sold
 #                       as part of a bundle (3 for $5)
 #
-# business_fee:         The amount the gallery received for their commission. The sell_price is split
-#                       between the business_fee and the seller_amount.
+# tenant_fee:         The amount the gallery received for their commission. The sell_price is split
+#                       between the tenant_fee and the seller_amount.
 # seller_amount:        The amount the seller received. 
 #
 # notes:                Any notes about the item.
@@ -45,7 +45,7 @@
 create table ciniki_artgallery_exhibition_items (
     id int not null auto_increment,
     uuid char(36) not null,
-    business_id int not null,
+    tnid int not null,
     exhibition_id int not null,
     customer_id int not null,
     code varchar(50) not null,
@@ -58,12 +58,12 @@ create table ciniki_artgallery_exhibition_items (
     fee_percent decimal(19,4) not null,
     sell_date datetime not null,
     sell_price decimal(19,4) not null,
-    business_fee decimal(19,4) not null,
+    tenant_fee decimal(19,4) not null,
     seller_amount decimal(19,4) not null,
     notes varchar(6000) not null,
     date_added datetime not null,
     last_updated datetime not null,
     primary key (id),
     index (exhibition_id, customer_id), 
-    index sync (business_id, uuid, last_updated)
+    index sync (tnid, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.02';

@@ -11,12 +11,12 @@
 // Returns
 // -------
 //
-function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, $args) {
+function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) {
 
     //
     // Check to make sure the module is enabled
     //
-    if( !isset($ciniki['business']['modules']['ciniki.artgallery']) ) {
+    if( !isset($ciniki['tenant']['modules']['ciniki.artgallery']) ) {
         return array('stat'=>'404', 'err'=>array('code'=>'ciniki.courses.80', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
     $page = array(
@@ -35,7 +35,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
         && isset($args['uri_split'][1]) && $args['uri_split'][1] == 'download'
         && isset($args['uri_split'][2]) && $args['uri_split'][2] != '' ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'info', 'web', 'fileDownload');
-        $rc = ciniki_info_web_fileDownload($ciniki, $business_id, $args['uri_split'][0], '', $args['uri_split'][2]);
+        $rc = ciniki_info_web_fileDownload($ciniki, $tnid, $args['uri_split'][0], '', $args['uri_split'][2]);
         if( $rc['stat'] == 'ok' ) {
             return array('stat'=>'ok', 'download'=>$rc['file']);
         }
@@ -96,8 +96,8 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
         $page['breadcrumbs'][] = array('url'=>$args['base_url'] . '/exhibitions', 'name'=>'Application');
         ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processContent');
         ciniki_core_loadMethod($ciniki, 'ciniki', 'info', 'web', 'pageDetails');
-//      $rc = ciniki_artgallery_web_exhibitionApplicationDetails($ciniki, $settings, $business_id);
-        $rc = ciniki_info_web_pageDetails($ciniki, $settings, $business_id, array('content_type'=>10));
+//      $rc = ciniki_artgallery_web_exhibitionApplicationDetails($ciniki, $settings, $tnid);
+        $rc = ciniki_info_web_pageDetails($ciniki, $settings, $tnid, array('content_type'=>10));
         if( $rc['stat'] != 'ok' ) {
             return array('stat'=>'404', 'err'=>array('code'=>'ciniki.web.44', 'msg'=>"I'm sorry, but we can't find any information about the requestion application.", 'err'=>$rc['err']));;
         }
@@ -150,7 +150,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
         // and prev from the list of images returned
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'web', 'exhibitionDetails');
-        $rc = ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_id, $exhibition_permalink);
+        $rc = ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $tnid, $exhibition_permalink);
         if( $rc['stat'] != 'ok' ) {
             return array('stat'=>'404', 'err'=>array('code'=>'ciniki.web.45', 'msg'=>"I'm sorry, but we can't seem to find the image your requested.", $rc['err']));
         }
@@ -257,7 +257,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
         // Check to see if there is an introduction message to display
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
-        $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_content', 'business_id', $business_id, 'ciniki.web', 'content', 'page-artgalleryexhibitions');
+        $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_content', 'tnid', $tnid, 'ciniki.web', 'content', 'page-artgalleryexhibitions');
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -279,7 +279,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
             // Check if there is an application
             //
             ciniki_core_loadMethod($ciniki, 'ciniki', 'info', 'web', 'pageDetails');
-            $rc = ciniki_info_web_pageDetails($ciniki, $settings, $business_id, array('content_type'=>10));
+            $rc = ciniki_info_web_pageDetails($ciniki, $settings, $tnid, array('content_type'=>10));
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
@@ -303,7 +303,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
         $num_current = 0;
         if( $page_past_cur == 1 ) {
             ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'web', 'exhibitionList');
-            $rc = ciniki_artgallery_web_exhibitionList($ciniki, $settings, $business_id, 
+            $rc = ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, 
                 array('type'=>'current', 'limit'=>0, 'category'=>$category));
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
@@ -332,7 +332,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
             }
 
             ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'web', 'exhibitionList');
-            $rc = ciniki_artgallery_web_exhibitionList($ciniki, $settings, $business_id, 
+            $rc = ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, 
                 array('type'=>'upcoming', 'limit'=>0, 'category'=>$category));
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
@@ -376,7 +376,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
             } else {
                 $offset = $page_past_initial_limit + ($page_past_cur-2)*$page_past_limit;
             }
-            $rc = ciniki_artgallery_web_exhibitionList($ciniki, $settings, $business_id, 
+            $rc = ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, 
                 array('type'=>'past', 
                     'category'=>$category,
                     'offset'=>$offset,
@@ -419,7 +419,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
             && $page_past_cur == 1
             ) {
             ciniki_core_loadMethod($ciniki, 'ciniki', 'info', 'web', 'pageDetails');
-            $rc = ciniki_info_web_pageDetails($ciniki, $settings, $business_id,
+            $rc = ciniki_info_web_pageDetails($ciniki, $settings, $tnid,
                 array('content_type'=>10));
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
@@ -437,9 +437,9 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $business_id, 
     // Check for categories
     //
     $page['submenu'] = array();
-    if( ($ciniki['business']['modules']['ciniki.artgallery']['flags']&0x04) > 0 ) {
+    if( ($ciniki['tenant']['modules']['ciniki.artgallery']['flags']&0x04) > 0 ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'web', 'categories');
-        $rc = ciniki_artgallery_web_categories($ciniki, $settings, $business_id, array());
+        $rc = ciniki_artgallery_web_categories($ciniki, $settings, $tnid, array());
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }

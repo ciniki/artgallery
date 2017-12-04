@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to add the exhibition to.
+// tnid:         The ID of the tenant to add the exhibition to.
 //
 // name:                The name of the exhibition.
 // description:         (optional) The extended description of the exhibition, can be much longer than the name.
@@ -34,7 +34,7 @@ function ciniki_artgallery_exhibitionAdd(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'), 
         'webflags'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'name'=>'Web Flags'), 
         'start_date'=>array('required'=>'yes', 'blank'=>'no', 'default'=>'', 'type'=>'date', 'name'=>'Start Date'),
@@ -54,20 +54,20 @@ function ciniki_artgallery_exhibitionAdd(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'private', 'checkAccess');
-    $rc = ciniki_artgallery_checkAccess($ciniki, $args['business_id'], 'ciniki.artgallery.exhibitionAdd'); 
+    $rc = ciniki_artgallery_checkAccess($ciniki, $args['tnid'], 'ciniki.artgallery.exhibitionAdd'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
     $modules = $rc['modules'];
     
     //
-    // Load the business intl settings
+    // Load the tenant intl settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -84,12 +84,12 @@ function ciniki_artgallery_exhibitionAdd(&$ciniki) {
     //
     // Attached the location permalink to the exhibition permalink
     //
-    if( ($ciniki['business']['modules']['ciniki.artgallery']['flags']&0x01) == 1 ) {
+    if( ($ciniki['tenant']['modules']['ciniki.artgallery']['flags']&0x01) == 1 ) {
         if( isset($args['location_id']) && $args['location_id'] > 0 ) { 
             $strsql = "SELECT id, name, permalink "
                 . "FROM ciniki_artgallery_locations "
                 . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['location_id']) . "' "
-                . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . "";
             $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.artgallery', 'location');
             if( $rc['stat'] != 'ok' ) {
@@ -113,7 +113,7 @@ function ciniki_artgallery_exhibitionAdd(&$ciniki) {
     // Check the permalink doesn't already exist
     //
     $strsql = "SELECT id, name, permalink FROM ciniki_artgallery_exhibitions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.artgallery', 'exhibition');
@@ -140,7 +140,7 @@ function ciniki_artgallery_exhibitionAdd(&$ciniki) {
     // Add the exhibition
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition', $args, 0x04);
+    $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.artgallery.exhibition', $args, 0x04);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -151,7 +151,7 @@ function ciniki_artgallery_exhibitionAdd(&$ciniki) {
     //
     if( isset($args['categories']) ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
-        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.artgallery', 'exhibition_tag', $args['business_id'],
+        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.artgallery', 'exhibition_tag', $args['tnid'],
             'ciniki_artgallery_exhibition_tags', 'ciniki_artgallery_history',
             'exhibition_id', $exhibition_id, 10, $args['categories']);
         if( $rc['stat'] != 'ok' ) {
@@ -164,11 +164,11 @@ function ciniki_artgallery_exhibitionAdd(&$ciniki) {
     // If exhibition was added ok, Check if any web collections to add
     //
     if( isset($args['webcollections'])
-        && isset($ciniki['business']['modules']['ciniki.web']) 
-        && ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+        && isset($ciniki['tenant']['modules']['ciniki.web']) 
+        && ($ciniki['tenant']['modules']['ciniki.web']['flags']&0x08) == 0x08
         ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionUpdate');
-        $rc = ciniki_web_hooks_webCollectionUpdate($ciniki, $args['business_id'],
+        $rc = ciniki_web_hooks_webCollectionUpdate($ciniki, $args['tnid'],
             array('object'=>'ciniki.artgallery.exhibition', 'object_id'=>$exhibition_id, 
                 'collection_ids'=>$args['webcollections']));
         if( $rc['stat'] != 'ok' ) {
@@ -186,11 +186,11 @@ function ciniki_artgallery_exhibitionAdd(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'artgallery');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'artgallery');
 
     return array('stat'=>'ok', 'id'=>$exhibition_id);
 }

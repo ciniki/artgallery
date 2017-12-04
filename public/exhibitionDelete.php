@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to remove the item from.
+// tnid:         The ID of the tenant to remove the item from.
 // exhibition_id:       The ID of the exhibition to remove.
 // 
 // Returns
@@ -21,7 +21,7 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'exhibition_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'File'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -31,10 +31,10 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'private', 'checkAccess');
-    $rc = ciniki_artgallery_checkAccess($ciniki, $args['business_id'], 'ciniki.artgallery.exhibitionDelete'); 
+    $rc = ciniki_artgallery_checkAccess($ciniki, $args['tnid'], 'ciniki.artgallery.exhibitionDelete'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }
@@ -43,7 +43,7 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
     // Get the uuid of the artgallery item to be deleted
     //
     $strsql = "SELECT uuid FROM ciniki_artgallery_exhibitions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['exhibition_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.artgallery', 'file');
@@ -73,7 +73,7 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
     // Remove any images
     //
     $strsql = "SELECT id, uuid, image_id FROM ciniki_artgallery_exhibition_images "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND exhibition_id = '" . ciniki_core_dbQuote($ciniki, $args['exhibition_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.artgallery', 'image');
@@ -85,7 +85,7 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
         $images = $rc['rows'];
         
         foreach($images as $iid => $image) {
-            $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition_image', 
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.artgallery.exhibition_image', 
                 $image['id'], $image['uuid'], 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
@@ -98,7 +98,7 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
     // Remove any links
     //
     $strsql = "SELECT id, uuid FROM ciniki_artgallery_exhibition_links "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND exhibition_id = '" . ciniki_core_dbQuote($ciniki, $args['exhibition_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.artgallery', 'link');
@@ -110,7 +110,7 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
         $links = $rc['rows'];
         
         foreach($links as $iid => $link) {
-            $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition_link', 
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.artgallery.exhibition_link', 
                 $link['id'], $link['uuid'], 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
@@ -122,11 +122,11 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
     //
     // Remove the exhibition from any web collections
     //
-    if( isset($ciniki['business']['modules']['ciniki.web']) 
-        && ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+    if( isset($ciniki['tenant']['modules']['ciniki.web']) 
+        && ($ciniki['tenant']['modules']['ciniki.web']['flags']&0x08) == 0x08
         ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionDeleteObjRef');
-        $rc = ciniki_web_hooks_webCollectionDeleteObjRef($ciniki, $args['business_id'],
+        $rc = ciniki_web_hooks_webCollectionDeleteObjRef($ciniki, $args['tnid'],
             array('object'=>'ciniki.artgallery.exhibition', 'object_id'=>$args['exhibition_id']));
         if( $rc['stat'] != 'ok' ) { 
             ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
@@ -138,7 +138,7 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
     // Remove any tags
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsDelete');
-    $rc = ciniki_core_tagsDelete($ciniki, 'ciniki.artgallery', 'exhibition_tag', $args['business_id'],
+    $rc = ciniki_core_tagsDelete($ciniki, 'ciniki.artgallery', 'exhibition_tag', $args['tnid'],
         'ciniki_artgallery_exhibition_tags', 'ciniki_artgallery_history',
         'exhibition_id', $args['exhibition_id']);
     if( $rc['stat'] != 'ok' ) {
@@ -149,7 +149,7 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
     //
     // Remove the exhibition
     //
-    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition', 
+    $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.artgallery.exhibition', 
         $args['exhibition_id'], $exhibition_uuid, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
@@ -165,11 +165,11 @@ function ciniki_artgallery_exhibitionDelete(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'artgallery');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'artgallery');
 
     return array('stat'=>'ok');
 }

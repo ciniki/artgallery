@@ -9,7 +9,7 @@
 // Returns
 // -------
 //
-function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_id, $permalink) {
+function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $tnid, $permalink) {
 
     $strsql = "SELECT ciniki_artgallery_exhibitions.id, "
         . "ciniki_artgallery_exhibitions.name, "
@@ -39,7 +39,7 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
             . "ciniki_artgallery_exhibitions.id = ciniki_artgallery_exhibition_images.exhibition_id "
             . "AND (ciniki_artgallery_exhibition_images.webflags&0x01) = 0 "
             . ") "
-        . "WHERE ciniki_artgallery_exhibitions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_artgallery_exhibitions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_artgallery_exhibitions.permalink = '" . ciniki_core_dbQuote($ciniki, $permalink) . "' "
         // Check the exhibition is visible on the website
         . "AND (ciniki_artgallery_exhibitions.webflags&0x01) = 0 "
@@ -66,7 +66,7 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
     //
     // Get the location for the exhibition
     //
-    if( ($ciniki['business']['modules']['ciniki.artgallery']['flags']&0x01) > 0 
+    if( ($ciniki['tenant']['modules']['ciniki.artgallery']['flags']&0x01) > 0 
         && $exhibition['location_id'] > 0 
         ) {
         $strsql = "SELECT ciniki_artgallery_locations.name, "   
@@ -80,7 +80,7 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
             . "ciniki_artgallery_locations.url "    
             . "FROM ciniki_artgallery_locations "
             . "WHERE ciniki_artgallery_locations.id = '" . ciniki_core_dbQuote($ciniki, $exhibition['location_id']) . "' "
-            . "AND ciniki_artgallery_locations.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_artgallery_locations.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.artgallery', 'location');
         if( $rc['stat'] != 'ok' ) {
@@ -121,7 +121,7 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $business_i
     //
     $strsql = "SELECT id, name, url "
         . "FROM ciniki_artgallery_exhibition_links "
-        . "WHERE ciniki_artgallery_exhibition_links.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_artgallery_exhibition_links.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_artgallery_exhibition_links.exhibition_id = '" . ciniki_core_dbQuote($ciniki, $exhibition['id']) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');

@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to get the history for.
+// tnid:         The ID of the tenant to get the history for.
 // exhibition_link_id:  The ID of the exhibition to get the history for.
 // field:               The field to get the history for.
 //
@@ -29,7 +29,7 @@ function ciniki_artgallery_exhibitionHistory($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'exhibition_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Exhibition'), 
         'field'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Field'), 
         ));
@@ -39,10 +39,10 @@ function ciniki_artgallery_exhibitionHistory($ciniki) {
     $args = $rc['args'];
     
     //
-    // Check access to business_id as owner, or sys admin
+    // Check access to tnid as owner, or sys admin
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'private', 'checkAccess');
-    $rc = ciniki_artgallery_checkAccess($ciniki, $args['business_id'], 'ciniki.artgallery.exhibitionHistory');
+    $rc = ciniki_artgallery_checkAccess($ciniki, $args['tnid'], 'ciniki.artgallery.exhibitionHistory');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -50,11 +50,11 @@ function ciniki_artgallery_exhibitionHistory($ciniki) {
     if( $args['field'] == 'start_date' || $args['field'] == 'end_date' ) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistoryReformat');
     return ciniki_core_dbGetModuleHistoryReformat($ciniki, 'ciniki.artgallery', 'ciniki_artgallery_history', 
-        $args['business_id'], 'ciniki_artgallery_exhibitions', $args['exhibition_id'], $args['field'], 'date');
+        $args['tnid'], 'ciniki_artgallery_exhibitions', $args['exhibition_id'], $args['field'], 'date');
     }
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistory');
     return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.artgallery', 'ciniki_artgallery_history', 
-        $args['business_id'], 'ciniki_artgallery_exhibitions', $args['exhibition_id'], $args['field']);
+        $args['tnid'], 'ciniki_artgallery_exhibitions', $args['exhibition_id'], $args['field']);
 }
 ?>

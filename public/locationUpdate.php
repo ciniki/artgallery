@@ -7,7 +7,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to add the location to.
+// tnid:         The ID of the tenant to add the location to.
 // name:                The name of the location.  
 //
 // Returns
@@ -20,7 +20,7 @@ function ciniki_artgallery_locationUpdate(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'location_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Exhibition'), 
         'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'), 
         'permalink'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Permalink'), 
@@ -41,10 +41,10 @@ function ciniki_artgallery_locationUpdate(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'private', 'checkAccess');
-    $rc = ciniki_artgallery_checkAccess($ciniki, $args['business_id'], 'ciniki.artgallery.locationUpdate', 0); 
+    $rc = ciniki_artgallery_checkAccess($ciniki, $args['tnid'], 'ciniki.artgallery.locationUpdate', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }
@@ -63,7 +63,7 @@ function ciniki_artgallery_locationUpdate(&$ciniki) {
     //
     if( isset($args['permalink']) ) {
         $strsql = "SELECT id, name, permalink FROM ciniki_artgallery_locations "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
             . "AND id <> '" . ciniki_core_dbQuote($ciniki, $args['location_id']) . "' "
             . "";
@@ -92,7 +92,7 @@ function ciniki_artgallery_locationUpdate(&$ciniki) {
     // Update the location
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-    $rc =  ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.artgallery.location', $args['location_id'], $args, 0x04);
+    $rc =  ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.artgallery.location', $args['location_id'], $args, 0x04);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -106,11 +106,11 @@ function ciniki_artgallery_locationUpdate(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'artgallery');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'artgallery');
 
     return array('stat'=>'ok');
 }

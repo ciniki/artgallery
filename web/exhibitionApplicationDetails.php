@@ -9,11 +9,11 @@
 // Returns
 // -------
 //
-function ciniki_artgallery_web_exhibitionApplicationDetails($ciniki, $settings, $business_id) {
+function ciniki_artgallery_web_exhibitionApplicationDetails($ciniki, $settings, $tnid) {
 
     $strsql = "SELECT detail_value "
         . "FROM ciniki_artgallery_settings "
-        . "WHERE ciniki_artgallery_settings.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_artgallery_settings.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND detail_key = 'exhibition-application-details' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.artgallery', 'application');
@@ -28,7 +28,7 @@ function ciniki_artgallery_web_exhibitionApplicationDetails($ciniki, $settings, 
 
     $strsql = "SELECT id, name, extension, permalink, description "
         . "FROM ciniki_artgallery_files "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND type = 2 "
         . "AND (webflags&0x01) = 0 "
         . "ORDER BY name "

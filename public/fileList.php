@@ -7,7 +7,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to get files for.
+// tnid:     The ID of the tenant to get files for.
 //
 // Returns
 // -------
@@ -18,7 +18,7 @@ function ciniki_artgallery_fileList($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'type'=>array('required'=>'no', 'blank'=>'no', 'validlist'=>array('1','2'), 'name'=>'Type'), 
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -27,10 +27,10 @@ function ciniki_artgallery_fileList($ciniki) {
     $args = $rc['args'];
     
     //  
-    // Check access to business_id as owner, or sys admin. 
+    // Check access to tnid as owner, or sys admin. 
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'private', 'checkAccess');
-    $rc = ciniki_artgallery_checkAccess($ciniki, $args['business_id'], 'ciniki.artgallery.fileList');
+    $rc = ciniki_artgallery_checkAccess($ciniki, $args['tnid'], 'ciniki.artgallery.fileList');
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -48,7 +48,7 @@ function ciniki_artgallery_fileList($ciniki) {
         . "ciniki_artgallery_files.description, "
         . "ciniki_artgallery_files.permalink "
         . "FROM ciniki_artgallery_files "
-        . "WHERE ciniki_artgallery_files.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' ";
+        . "WHERE ciniki_artgallery_files.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' ";
     if( isset($args['type']) && $args['type'] != '' ) {
         $strsql .= "AND type = '" . ciniki_core_dbQuote($ciniki, $args['type']) . "' ";
     }

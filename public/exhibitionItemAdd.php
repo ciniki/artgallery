@@ -2,13 +2,13 @@
 //
 // Description
 // -----------
-// This method will add a new exhibition for the business.
+// This method will add a new exhibition for the tenant.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to add the exhibition to.
+// tnid:     The ID of the tenant to add the exhibition to.
 // name:            The name of the exhibition.
 // status:          The status of the exhibition.
 // start_date:      (optional) The date the exhibition starts.  
@@ -24,7 +24,7 @@ function ciniki_artgallery_exhibitionItemAdd(&$ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'exhibition_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Exhibition'), 
         'customer_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Member'), 
         'code'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Code'), 
@@ -37,7 +37,7 @@ function ciniki_artgallery_exhibitionItemAdd(&$ciniki) {
         'fee_percent'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'name'=>'Fee Percent'), 
         'sell_date'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'type'=>'date', 'name'=>'Sell Date'), 
         'sell_price'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'type'=>'currency', 'name'=>'Sell Price'), 
-        'business_fee'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'type'=>'currency', 'name'=>'Business Fee'), 
+        'tenant_fee'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'type'=>'currency', 'name'=>'Tenant Fee'), 
         'seller_amount'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'type'=>'currency', 'name'=>'Seller Amount'), 
         'notes'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Notes'), 
         ));
@@ -47,10 +47,10 @@ function ciniki_artgallery_exhibitionItemAdd(&$ciniki) {
     $args = $rc['args'];
     
     //
-    // Check access to business_id as owner
+    // Check access to tnid as owner
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'private', 'checkAccess');
-    $rc = ciniki_artgallery_checkAccess($ciniki, $args['business_id'], 'ciniki.artgallery.exhibitionItemAdd');
+    $rc = ciniki_artgallery_checkAccess($ciniki, $args['tnid'], 'ciniki.artgallery.exhibitionItemAdd');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -71,7 +71,7 @@ function ciniki_artgallery_exhibitionItemAdd(&$ciniki) {
     // Add the exhibition to the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition_item', $args, 0x04);
+    $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.artgallery.exhibition_item', $args, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
         return $rc;
@@ -87,11 +87,11 @@ function ciniki_artgallery_exhibitionItemAdd(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'artgallery');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'artgallery');
 
     return array('stat'=>'ok', 'id'=>$item_id);
 }

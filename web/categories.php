@@ -9,7 +9,7 @@
 // Returns
 // -------
 //
-function ciniki_artgallery_web_categories($ciniki, $settings, $business_id, $args) {
+function ciniki_artgallery_web_categories($ciniki, $settings, $tnid, $args) {
 
     //
     // Get the list of category names
@@ -18,10 +18,10 @@ function ciniki_artgallery_web_categories($ciniki, $settings, $business_id, $arg
     $strsql = "SELECT DISTINCT ciniki_artgallery_exhibition_tags.tag_name AS name, "
         . "ciniki_artgallery_exhibition_tags.permalink "
         . "FROM ciniki_artgallery_exhibition_tags, ciniki_artgallery_exhibitions "
-        . "WHERE ciniki_artgallery_exhibition_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_artgallery_exhibition_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_artgallery_exhibition_tags.tag_type = '10' "
         . "AND ciniki_artgallery_exhibition_tags.exhibition_id = ciniki_artgallery_exhibitions.id "
-        . "AND ciniki_artgallery_exhibitions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "AND ciniki_artgallery_exhibitions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND (ciniki_artgallery_exhibitions.webflags&0x01) = 0 "
         . "ORDER BY tag_name "
         . "";

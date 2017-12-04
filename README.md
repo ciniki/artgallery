@@ -1,4 +1,4 @@
-Ciniki - Small Business Management Platform
+Ciniki - Multitenant Cloud Platform
 ===========================================
 
 The art gallery module is designed to store information about exhibitions, exhibitors and membership information.

@@ -90,7 +90,7 @@ function ciniki_artgallery_exhibitions() {
         };
         this.menu.liveSearchCb = function(s, i, value) {
             if( s == 'search' && value != '' ) {
-                M.api.getJSONBgCb('ciniki.artgallery.exhibitionSearch', {'business_id':M.curBusinessID, 'start_needle':value, 'limit':'15'}, 
+                M.api.getJSONBgCb('ciniki.artgallery.exhibitionSearch', {'tnid':M.curTenantID, 'start_needle':value, 'limit':'15'}, 
                     function(rsp) { 
                         M.ciniki_artgallery_exhibitions.menu.liveSearchShow('search', null, M.gE(M.ciniki_artgallery_exhibitions.menu.panelUID + '_' + s), rsp.exhibitions); 
                     });
@@ -188,7 +188,7 @@ function ciniki_artgallery_exhibitions() {
                     if( d.image.image_data != null && d.image.image_data != '' ) {
                         return '<img width="75px" height="75px" src=\'' + d.image.image_data + '\' />'; 
                     } else {
-                        return '<img width="75px" height="75px" src=\'' + M.api.getBinaryURL('ciniki.artgallery.getImage', {'business_id':M.curBusinessID, 'image_id':d.image.image_id, 'version':'thumbnail', 'maxwidth':'75'}) + '\' />'; 
+                        return '<img width="75px" height="75px" src=\'' + M.api.getBinaryURL('ciniki.artgallery.getImage', {'tnid':M.curTenantID, 'image_id':d.image.image_id, 'version':'thumbnail', 'maxwidth':'75'}) + '\' />'; 
                     }
                 } else {
                     return '<img width="75px" height="75px" src=\'/ciniki-mods/core/ui/themes/default/img/noimage_75.jpg\' />';
@@ -202,7 +202,7 @@ function ciniki_artgallery_exhibitions() {
                     case 0: return d.seller.first + ' ' + d.seller.last;
                     case 1: return d.seller.num_items;
                     case 2: return d.seller.total_price;
-                    case 3: return d.seller.total_business_fee;
+                    case 3: return d.seller.total_tenant_fee;
                     case 4: return d.seller.total_seller_amount;
                 }
             }
@@ -213,7 +213,7 @@ function ciniki_artgallery_exhibitions() {
                     case 0: return d.seller.last;
                     case 1: return d.seller.num_items;
                     case 2: return d.seller.total_price.replace(/\$/, '');
-                    case 3: return d.seller.total_business_fee.replace(/\$/, '');
+                    case 3: return d.seller.total_tenant_fee.replace(/\$/, '');
                     case 4: return d.seller.total_seller_amount.replace(/\$/, '');
                 }
             }
@@ -234,7 +234,7 @@ function ciniki_artgallery_exhibitions() {
         };
         this.exhibition.addDropImage = function(iid) {
             var rsp = M.api.getJSON('ciniki.artgallery.exhibitionImageAdd',
-                {'business_id':M.curBusinessID, 'image_id':iid, 
+                {'tnid':M.curTenantID, 'image_id':iid, 
                 'exhibition_id':M.ciniki_artgallery_exhibitions.exhibition.exhibition_id});
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
@@ -244,7 +244,7 @@ function ciniki_artgallery_exhibitions() {
         };
         this.exhibition.addDropImageRefresh = function() {
             if( M.ciniki_artgallery_exhibitions.exhibition.exhibition_id > 0 ) {
-                var rsp = M.api.getJSONCb('ciniki.artgallery.exhibitionGet', {'business_id':M.curBusinessID, 
+                var rsp = M.api.getJSONCb('ciniki.artgallery.exhibitionGet', {'tnid':M.curTenantID, 
                     'exhibition_id':M.ciniki_artgallery_exhibitions.exhibition.exhibition_id, 'images':'yes'}, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -298,7 +298,7 @@ function ciniki_artgallery_exhibitions() {
         };
         this.edit.liveSearchCb = function(s, i, value) {
             if( i == 'location' ) {
-                var rsp = M.api.getJSONBgCb('ciniki.artgallery.exhibitionSearchField', {'business_id':M.curBusinessID, 'field':i, 'start_needle':value, 'limit':15},
+                var rsp = M.api.getJSONBgCb('ciniki.artgallery.exhibitionSearchField', {'tnid':M.curTenantID, 'field':i, 'start_needle':value, 'limit':15},
                     function(rsp) {
                         M.ciniki_artgallery_exhibitions.edit.liveSearchShow(s, i, M.gE(M.ciniki_artgallery_exhibitions.edit.panelUID + '_' + i), rsp.results);
                     });
@@ -323,7 +323,7 @@ function ciniki_artgallery_exhibitions() {
             return '';
         };
         this.edit.fieldHistoryArgs = function(s, i) {
-            return {'method':'ciniki.artgallery.exhibitionHistory','args':{'business_id':M.curBusinessID, 
+            return {'method':'ciniki.artgallery.exhibitionHistory','args':{'tnid':M.curTenantID, 
                 'exhibition_id':M.ciniki_artgallery_exhibitions.edit.exhibition_id, 'field':i}};
         };
         this.edit.addDropImage = function(iid) {
@@ -379,8 +379,8 @@ function ciniki_artgallery_exhibitions() {
         //
         // Check if web collections are enabled
         //
-        if( M.curBusiness.modules['ciniki.web'] != null 
-            && (M.curBusiness.modules['ciniki.web'].flags&0x08) > 0 ) {
+        if( M.curTenant.modules['ciniki.web'] != null 
+            && (M.curTenant.modules['ciniki.web'].flags&0x08) > 0 ) {
             this.exhibition.sections.info.list.webcollections_text.visible = 'yes';
             this.edit.sections._webcollections.active = 'yes';
             this.newlocation.sections._webcollections.active = 'yes';
@@ -393,11 +393,11 @@ function ciniki_artgallery_exhibitions() {
         //
         // Check if locations or exhibition inventory is 
         //
-        if( M.curBusiness.modules['ciniki.artgallery'] != null 
-            && (M.curBusiness.modules['ciniki.artgallery'].flags&0x05) > 0 ) {
+        if( M.curTenant.modules['ciniki.artgallery'] != null 
+            && (M.curTenant.modules['ciniki.artgallery'].flags&0x05) > 0 ) {
             this.menu.size = 'medium mediumaside';
             var tab_count = 0;
-            if( (M.curBusiness.modules['ciniki.artgallery'].flags&0x02) > 0 ) {
+            if( (M.curTenant.modules['ciniki.artgallery'].flags&0x02) > 0 ) {
                 tab_count++;
                 this.menu.sections._tabs.selected = 'sellers';
                 this.menu.sections._tabs.tabs.sellers.visible = 'yes';
@@ -408,7 +408,7 @@ function ciniki_artgallery_exhibitions() {
                 this.menu.sections.sellers.visible = 'no';
                 this.exhibition.sections.sellers.visible = 'no';
             }
-            if( (M.curBusiness.modules['ciniki.artgallery'].flags&0x01) > 0 ) {
+            if( (M.curTenant.modules['ciniki.artgallery'].flags&0x01) > 0 ) {
                 tab_count++;
                 this.menu.sections._tabs.selected = 'locations';
                 this.menu.sections._tabs.tabs.locations.visible = 'yes';
@@ -427,7 +427,7 @@ function ciniki_artgallery_exhibitions() {
                 this.newlocation.sections.info.fields.location_id.active = 'no';
                 this.exhibition.sections._buttons.buttons.copy.visible = 'no';
             }
-            if( (M.curBusiness.modules['ciniki.artgallery'].flags&0x04) > 0 ) {
+            if( (M.curTenant.modules['ciniki.artgallery'].flags&0x04) > 0 ) {
                 tab_count++;
                 this.menu.sections._tabs.selected = 'categories';
                 this.menu.sections._tabs.tabs.categories.visible = 'yes';
@@ -474,8 +474,8 @@ function ciniki_artgallery_exhibitions() {
         //
         // Check if inventory should be shown
         //
-//      if( M.curBusiness.modules['ciniki.artgallery'] != null 
-//          && (M.curBusiness.modules['ciniki.artgallery'].flags&0x02) > 0 ) {
+//      if( M.curTenant.modules['ciniki.artgallery'] != null 
+//          && (M.curTenant.modules['ciniki.artgallery'].flags&0x02) > 0 ) {
 //          this.exhibition.sections.sellers.visible = 'yes';
 //      } else {
 //          this.exhibition.sections.sellers.visible = 'no';
@@ -509,7 +509,7 @@ function ciniki_artgallery_exhibitions() {
         }
         // Get the list of existing artgallery
         M.api.getJSONCb('ciniki.artgallery.exhibitionList', 
-            {'business_id':M.curBusinessID, 'year':this.menu.year, 'years':'yes', 'locations':'yes', 'sellers':'yes', 'categories':'yes',
+            {'tnid':M.curTenantID, 'year':this.menu.year, 'years':'yes', 'locations':'yes', 'sellers':'yes', 'categories':'yes',
                 'location_id':this.menu.location_id, 'customer_id':this.menu.customer_id, 'category':this.menu.category}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -573,7 +573,7 @@ function ciniki_artgallery_exhibitions() {
         this.edit.data = {};
         if( mid != null ) { this.edit.exhibition_id = mid; }
         this.edit.sections._buttons.buttons.delete.visible = (this.edit.exhibition_id>0?'yes':'no');
-        var rsp = M.api.getJSONCb('ciniki.artgallery.exhibitionGet', {'business_id':M.curBusinessID, 
+        var rsp = M.api.getJSONCb('ciniki.artgallery.exhibitionGet', {'tnid':M.curTenantID, 
             'exhibition_id':this.edit.exhibition_id, 'categories':'yes', 'locations':'yes', 'webcollections':'yes'}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -603,7 +603,7 @@ function ciniki_artgallery_exhibitions() {
         this.exhibition.reset();
         if( mid != null ) { this.exhibition.exhibition_id = mid; }
         var rsp = M.api.getJSONCb('ciniki.artgallery.exhibitionGet',
-            {'business_id':M.curBusinessID, 'exhibition_id':this.exhibition.exhibition_id, 
+            {'tnid':M.curTenantID, 'exhibition_id':this.exhibition.exhibition_id, 
             'links':'yes', 'images':'yes', 'webcollections':'yes', 'sellers':'yes'}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -612,7 +612,7 @@ function ciniki_artgallery_exhibitions() {
                 var p = M.ciniki_artgallery_exhibitions.exhibition;
                 p.data = rsp.exhibition;
 
-                if( (M.curBusiness.modules['ciniki.artgallery'].flags&0x01) == 0 && rsp.exhibition.location != null && rsp.exhibition.location != '' ) {
+                if( (M.curTenant.modules['ciniki.artgallery'].flags&0x01) == 0 && rsp.exhibition.location != null && rsp.exhibition.location != '' ) {
                     p.sections.info.list.location.visible = 'yes';
                 } else {
                     p.sections.info.list.location.visible = 'no';
@@ -646,7 +646,7 @@ function ciniki_artgallery_exhibitions() {
             var c = this.edit.serializeForm('no');
             if( c != '' ) {
                 var rsp = M.api.postJSONCb('ciniki.artgallery.exhibitionUpdate', 
-                    {'business_id':M.curBusinessID, 'exhibition_id':this.edit.exhibition_id}, c, function(rsp) {
+                    {'tnid':M.curTenantID, 'exhibition_id':this.edit.exhibition_id}, c, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
                             return false;
@@ -660,7 +660,7 @@ function ciniki_artgallery_exhibitions() {
             // Add exhibition
             var c = this.edit.serializeForm('yes');
             var rsp = M.api.postJSONCb('ciniki.artgallery.exhibitionAdd', 
-                {'business_id':M.curBusinessID}, c, function(rsp) {
+                {'tnid':M.curTenantID}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -676,7 +676,7 @@ function ciniki_artgallery_exhibitions() {
 
     this.exhibitionNewLocation = function(cb, eid) {
         if( eid != null ) { this.newlocation.old_exhibition_id = eid; }
-        var rsp = M.api.getJSONCb('ciniki.artgallery.exhibitionGet', {'business_id':M.curBusinessID, 
+        var rsp = M.api.getJSONCb('ciniki.artgallery.exhibitionGet', {'tnid':M.curTenantID, 
             'exhibition_id':this.newlocation.old_exhibition_id, 'categories':'yes', 'locations':'yes', 'webcollections':'yes'}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -707,7 +707,7 @@ function ciniki_artgallery_exhibitions() {
         // Add exhibition
         var c = this.newlocation.serializeForm('yes');
         var rsp = M.api.postJSONCb('ciniki.artgallery.exhibitionDuplicate', 
-            {'business_id':M.curBusinessID, 'old_exhibition_id':this.newlocation.old_exhibition_id}, c, function(rsp) {
+            {'tnid':M.curTenantID, 'old_exhibition_id':this.newlocation.old_exhibition_id}, c, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -719,7 +719,7 @@ function ciniki_artgallery_exhibitions() {
     this.deleteExhibition = function() {
         if( confirm("Are you sure you want to remove this exhibition and all images and links?") ) {
             var rsp = M.api.getJSONCb('ciniki.artgallery.exhibitionDelete', 
-                {'business_id':M.curBusinessID, 'exhibition_id':M.ciniki_artgallery_exhibitions.edit.exhibition_id}, function(rsp) {
+                {'tnid':M.curTenantID, 'exhibition_id':M.ciniki_artgallery_exhibitions.edit.exhibition_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -730,7 +730,7 @@ function ciniki_artgallery_exhibitions() {
     };
 
     this.downloadPriceList = function(eid, format) {
-        var args = {'business_id':M.curBusinessID, 'exhibition_id':eid, 'output':format};
+        var args = {'tnid':M.curTenantID, 'exhibition_id':eid, 'output':format};
         M.api.openPDF('ciniki.artgallery.exhibitionPriceList', args);
     };
 

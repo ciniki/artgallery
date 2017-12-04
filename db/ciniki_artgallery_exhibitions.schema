@@ -7,7 +7,7 @@
 # ------
 # id:                   The ID of the exhibition.
 # uuid:                 The Universal Unique ID of the exhibition
-# business_id:          The ID of the business the exhibition is part of.
+# tnid:                 The ID of the tenant the exhibition is part of.
 #
 # name:                 The name of the exhibition.
 # permalink:            The permalink for the exhibition.
@@ -33,7 +33,7 @@
 create table ciniki_artgallery_exhibitions (
     id int not null auto_increment,
     uuid char(36) not null,
-    business_id int not null,
+    tnid int not null,
     name varchar(150) not null,
     permalink varchar(250) not null,
     webflags tinyint not null,
@@ -48,6 +48,6 @@ create table ciniki_artgallery_exhibitions (
     date_added datetime not null,
     last_updated datetime not null,
     primary key (id),
-    unique index (business_id, permalink),
+    unique index (tnid, permalink),
     index sync (uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.02';

@@ -9,13 +9,13 @@
 // Returns
 // -------
 //
-function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id, $args) {
+function ciniki_artgallery_exhibitionLoad($ciniki, $tnid, $exhibition_id, $args) {
 
     //
-    // Load the business intl settings
+    // Load the tenant intl settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $business_id);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $tnid);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -48,9 +48,9 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
             . "FROM ciniki_artgallery_exhibitions "
             . "LEFT JOIN ciniki_artgallery_locations ON ("
                 . "ciniki_artgallery_exhibitions.location_id = ciniki_artgallery_locations.id "
-                . "AND ciniki_artgallery_locations.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_artgallery_locations.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . ") "
-            . "WHERE ciniki_artgallery_exhibitions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_artgallery_exhibitions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_artgallery_exhibitions.id = '" . ciniki_core_dbQuote($ciniki, $exhibition_id) . "' "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
@@ -84,13 +84,13 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
     //
     // Get the categories and tags for the post
     //
-    if( ($ciniki['business']['modules']['ciniki.artgallery']['flags']&0x04) > 0 
+    if( ($ciniki['tenant']['modules']['ciniki.artgallery']['flags']&0x04) > 0 
         && isset($exhibition_id) && $exhibition_id > 0 
         ) {
         $strsql = "SELECT tag_type, tag_name AS lists "
             . "FROM ciniki_artgallery_exhibition_tags "
             . "WHERE exhibition_id = '" . ciniki_core_dbQuote($ciniki, $exhibition_id) . "' "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "ORDER BY tag_type, tag_name "
             . "";
         $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
@@ -124,7 +124,7 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
             . "url, "
             . "last_updated "
             . "FROM ciniki_artgallery_exhibition_images "
-            . "WHERE ciniki_artgallery_exhibition_images.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_artgallery_exhibition_images.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_artgallery_exhibition_images.exhibition_id = '" . ciniki_core_dbQuote($ciniki, $exhibition_id) . "' "
             . "ORDER BY name "
             . "";
@@ -145,7 +145,7 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
             ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'hooks', 'loadThumbnail');
             foreach($rsp['exhibition']['images'] as $img_id => $img) {
                 if( isset($img['image']['image_id']) && $img['image']['image_id'] > 0 ) {
-                    $rc = ciniki_images_hooks_loadThumbnail($ciniki, $business_id, array('image_id'=>$img['image']['image_id'], 
+                    $rc = ciniki_images_hooks_loadThumbnail($ciniki, $tnid, array('image_id'=>$img['image']['image_id'], 
                         'maxlength'=>75, 'last_updated'=>$img['image']['last_updated'], 'reddot'=>$img['image']['reddot']));
                     if( $rc['stat'] != 'ok' ) {
                         return $rc;
@@ -164,7 +164,7 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
     if( isset($args['links']) && $args['links'] == 'yes' ) {
         $strsql = "SELECT id, name, url "
             . "FROM ciniki_artgallery_exhibition_links "
-            . "WHERE ciniki_artgallery_exhibition_links.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_artgallery_exhibition_links.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_artgallery_exhibition_links.exhibition_id = '" . ciniki_core_dbQuote($ciniki, $exhibition_id) . "' "
             . "ORDER BY name "
             . "";
@@ -186,11 +186,11 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
     // Get the list of web collections, and which ones this exhibition is attached to
     //
     if( isset($args['webcollections']) && $args['webcollections'] == 'yes'
-        && isset($ciniki['business']['modules']['ciniki.web']) 
-        && ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+        && isset($ciniki['tenant']['modules']['ciniki.web']) 
+        && ($ciniki['tenant']['modules']['ciniki.web']['flags']&0x08) == 0x08
         ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionList');
-        $rc = ciniki_web_hooks_webCollectionList($ciniki, $business_id,
+        $rc = ciniki_web_hooks_webCollectionList($ciniki, $tnid,
             array('object'=>'ciniki.artgallery.exhibition', 'object_id'=>$exhibition_id));
         if( $rc['stat'] != 'ok' ) { 
             return $rc;
@@ -206,8 +206,8 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
     // Get the list of sellers
     //
     if( isset($args['sellers']) && $args['sellers'] == 'yes' 
-        && isset($ciniki['business']['modules']['ciniki.artgallery']['flags']) 
-        && ($ciniki['business']['modules']['ciniki.web']['flags']&0x02) == 0x02
+        && isset($ciniki['tenant']['modules']['ciniki.artgallery']['flags']) 
+        && ($ciniki['tenant']['modules']['ciniki.web']['flags']&0x02) == 0x02
         ) {
         $strsql = "SELECT ciniki_artgallery_exhibition_items.customer_id, "
             . "IFNULL(ciniki_customers.display_name, '') AS display_name, "
@@ -215,22 +215,22 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
             . "IFNULL(ciniki_customers.last, '') AS last, "
             . "COUNT(ciniki_artgallery_exhibition_items.id) AS num_items, "
             . "SUM(ciniki_artgallery_exhibition_items.price) AS total_price, "
-            . "SUM(ciniki_artgallery_exhibition_items.business_fee) AS total_business_fee, "
+            . "SUM(ciniki_artgallery_exhibition_items.tenant_fee) AS total_tenant_fee, "
             . "SUM(ciniki_artgallery_exhibition_items.seller_amount) AS total_seller_amount "
             . "FROM ciniki_artgallery_exhibition_items "
             . "LEFT JOIN ciniki_customers ON ("
                 . "ciniki_artgallery_exhibition_items.customer_id = ciniki_customers.id "
-                . "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . ") "
             . "WHERE ciniki_artgallery_exhibition_items.exhibition_id = '" . ciniki_core_dbQuote($ciniki, $exhibition_id) . "' "
-            . "AND ciniki_artgallery_exhibition_items.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_artgallery_exhibition_items.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "GROUP BY ciniki_artgallery_exhibition_items.customer_id "
             . "ORDER BY ciniki_customers.display_name "
             . "";
         $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
             array('container'=>'sellers', 'fname'=>'customer_id', 'name'=>'seller',
                 'fields'=>array('id'=>'customer_id', 'display_name', 'first', 'last', 'num_items',
-                    'total_price', 'total_business_fee', 'total_seller_amount')),
+                    'total_price', 'total_tenant_fee', 'total_seller_amount')),
             ));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
@@ -242,8 +242,8 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $business_id, $exhibition_id,
             foreach($rsp['exhibition']['sellers'] as $sid => $seller) {
                 $rsp['exhibition']['sellers'][$sid]['seller']['total_price'] = numfmt_format_currency($intl_currency_fmt, 
                     $seller['seller']['total_price'], $intl_currency);
-                $rsp['exhibition']['sellers'][$sid]['seller']['total_business_fee'] = numfmt_format_currency($intl_currency_fmt, 
-                    $seller['seller']['total_business_fee'], $intl_currency);
+                $rsp['exhibition']['sellers'][$sid]['seller']['total_tenant_fee'] = numfmt_format_currency($intl_currency_fmt, 
+                    $seller['seller']['total_tenant_fee'], $intl_currency);
                 $rsp['exhibition']['sellers'][$sid]['seller']['total_seller_amount'] = numfmt_format_currency($intl_currency_fmt, 
                     $seller['seller']['total_seller_amount'], $intl_currency);
             }

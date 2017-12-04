@@ -9,7 +9,7 @@
 // Returns
 // -------
 //
-function ciniki_artgallery_web_calendarsWebItems($ciniki, $settings, $business_id, $args) {
+function ciniki_artgallery_web_calendarsWebItems($ciniki, $settings, $tnid, $args) {
 
     if( !isset($args['ltz_start']) || !is_a($args['ltz_start'], 'DateTime') ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.exhibitions.29', 'msg'=>'Invalid start date'));
@@ -21,8 +21,8 @@ function ciniki_artgallery_web_calendarsWebItems($ciniki, $settings, $business_i
     $sdt = $args['ltz_start'];
     $edt = $args['ltz_end'];
 
-    if( isset($ciniki['business']['module_pages']['ciniki.artgallery']['base_url']) ) {
-        $base_url = $ciniki['business']['module_pages']['ciniki.artgallery']['base_url'];
+    if( isset($ciniki['tenant']['module_pages']['ciniki.artgallery']['base_url']) ) {
+        $base_url = $ciniki['tenant']['module_pages']['ciniki.artgallery']['base_url'];
     } else {
         $base_url = '/exhibitions';
     }
@@ -64,11 +64,11 @@ function ciniki_artgallery_web_calendarsWebItems($ciniki, $settings, $business_i
         . "";
     // Check where to pull location information
     $location_sql = '';
-    if( ($ciniki['business']['modules']['ciniki.artgallery']['flags']&0x01) > 0 ) {
+    if( ($ciniki['tenant']['modules']['ciniki.artgallery']['flags']&0x01) > 0 ) {
         $strsql .= "ciniki_artgallery_locations.name AS location, ";
         $location_sql = "LEFT JOIN ciniki_artgallery_locations ON (" 
             . "ciniki_artgallery_exhibitions.location_id = ciniki_artgallery_locations.id "
-            . "AND ciniki_artgallery_locations.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_artgallery_locations.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") ";
     } else {
         $strsql .= "ciniki_artgallery_exhibitions.location, ";
@@ -88,7 +88,7 @@ function ciniki_artgallery_web_calendarsWebItems($ciniki, $settings, $business_i
         . "ciniki_artgallery_exhibitions.primary_image_id "
         . "FROM ciniki_artgallery_exhibitions "
         . $location_sql
-        . "WHERE ciniki_artgallery_exhibitions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_artgallery_exhibitions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         // Check the exhibition is visible on the website
         . "AND (ciniki_artgallery_exhibitions.webflags&0x01) = 0 "
         . "AND ("

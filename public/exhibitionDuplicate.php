@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to add the exhibition to.
+// tnid:         The ID of the tenant to add the exhibition to.
 //
 // name:                The name of the exhibition.
 // description:         (optional) The extended description of the exhibition, can be much longer than the name.
@@ -34,7 +34,7 @@ function ciniki_artgallery_exhibitionDuplicate(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'old_exhibition_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Exhibition'), 
         'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'), 
         'webflags'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'name'=>'Web Flags'), 
@@ -55,10 +55,10 @@ function ciniki_artgallery_exhibitionDuplicate(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'private', 'checkAccess');
-    $rc = ciniki_artgallery_checkAccess($ciniki, $args['business_id'], 'ciniki.artgallery.exhibitionDuplicate'); 
+    $rc = ciniki_artgallery_checkAccess($ciniki, $args['tnid'], 'ciniki.artgallery.exhibitionDuplicate'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -74,7 +74,7 @@ function ciniki_artgallery_exhibitionDuplicate(&$ciniki) {
     //
     $strsql = "SELECT id, name, permalink "
         . "FROM ciniki_artgallery_exhibitions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.artgallery', 'exhibition');
@@ -89,7 +89,7 @@ function ciniki_artgallery_exhibitionDuplicate(&$ciniki) {
     // Get the old exhibition details
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'private', 'exhibitionLoad');
-    $rc = ciniki_artgallery_exhibitionLoad($ciniki, $args['business_id'], $args['old_exhibition_id'], 
+    $rc = ciniki_artgallery_exhibitionLoad($ciniki, $args['tnid'], $args['old_exhibition_id'], 
         array('images'=>'yes', 'links'=>'yes')); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -116,7 +116,7 @@ function ciniki_artgallery_exhibitionDuplicate(&$ciniki) {
     // Add the exhibition
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition', $args, 0x04);
+    $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.artgallery.exhibition', $args, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
         return $rc;
@@ -128,7 +128,7 @@ function ciniki_artgallery_exhibitionDuplicate(&$ciniki) {
     //
     if( isset($args['categories']) ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
-        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.artgallery', 'exhibition_tag', $args['business_id'],
+        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.artgallery', 'exhibition_tag', $args['tnid'],
             'ciniki_artgallery_exhibition_tags', 'ciniki_artgallery_history',
             'exhibition_id', $exhibition_id, 10, $args['categories']);
         if( $rc['stat'] != 'ok' ) {
@@ -141,11 +141,11 @@ function ciniki_artgallery_exhibitionDuplicate(&$ciniki) {
     // If exhibition was added ok, Check if any web collections to add
     //
     if( isset($args['webcollections'])
-        && isset($ciniki['business']['modules']['ciniki.web']) 
-        && ($ciniki['business']['modules']['ciniki.web']['flags']&0x08) == 0x08
+        && isset($ciniki['tenant']['modules']['ciniki.web']) 
+        && ($ciniki['tenant']['modules']['ciniki.web']['flags']&0x08) == 0x08
         ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'hooks', 'webCollectionUpdate');
-        $rc = ciniki_web_hooks_webCollectionUpdate($ciniki, $args['business_id'],
+        $rc = ciniki_web_hooks_webCollectionUpdate($ciniki, $args['tnid'],
             array('object'=>'ciniki.artgallery.exhibition', 'object_id'=>$exhibition_id, 
                 'collection_ids'=>$args['webcollections']));
         if( $rc['stat'] != 'ok' ) {
@@ -161,7 +161,7 @@ function ciniki_artgallery_exhibitionDuplicate(&$ciniki) {
         foreach($exhibition['links'] as $link) {
             $link = $link['link'];
             $link['exhibition_id'] = $exhibition_id;
-            $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition_link', $link, 0x04);
+            $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.artgallery.exhibition_link', $link, 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
                 return $rc;
@@ -176,7 +176,7 @@ function ciniki_artgallery_exhibitionDuplicate(&$ciniki) {
         foreach($exhibition['images'] as $img) {
             $img = $img['image'];
             $img['exhibition_id'] = $exhibition_id;
-            $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition_image', $img, 0x04);
+            $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.artgallery.exhibition_image', $img, 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
                 return $rc;
@@ -187,8 +187,8 @@ function ciniki_artgallery_exhibitionDuplicate(&$ciniki) {
     //
     // Add any items from the old exhibition
     //
-    if( isset($ciniki['business']['modules']['ciniki.artgallery']['flags'])
-        && ($ciniki['business']['modules']['ciniki.web']['flags']&0x02) == 0x02
+    if( isset($ciniki['tenant']['modules']['ciniki.artgallery']['flags'])
+        && ($ciniki['tenant']['modules']['ciniki.web']['flags']&0x02) == 0x02
         ) {
         $strsql = "SELECT id, "
             . "customer_id, "
@@ -201,11 +201,11 @@ function ciniki_artgallery_exhibitionDuplicate(&$ciniki) {
             . "fee_percent, "
             . "sell_date, "
             . "sell_price, "
-            . "business_fee, "
+            . "tenant_fee, "
             . "seller_amount, "
             . "notes "
             . "FROM ciniki_artgallery_exhibition_items "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND exhibition_id = '" . ciniki_core_dbQuote($ciniki, $args['old_exhibition_id']) . "' "
             . "AND sell_date = '0000-00-00 00:00:00' " // Only copy unsold items
             . "";
@@ -217,7 +217,7 @@ function ciniki_artgallery_exhibitionDuplicate(&$ciniki) {
         if( isset($rc['rows']) ) {
             foreach($rc['rows'] as $item) {
                 $item['exhibition_id'] = $exhibition_id;
-                $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.artgallery.exhibition_item', $item, 0x04);
+                $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.artgallery.exhibition_item', $item, 0x04);
                 if( $rc['stat'] != 'ok' ) {
                     ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artgallery');
                     return $rc;
@@ -236,11 +236,11 @@ function ciniki_artgallery_exhibitionDuplicate(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'artgallery');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'artgallery');
 
     return array('stat'=>'ok', 'id'=>$exhibition_id);
 }

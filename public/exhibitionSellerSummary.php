@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business the seller is attached to.
+// tnid:     The ID of the tenant the seller is attached to.
 // 
 // Returns
 // -------
@@ -19,7 +19,7 @@ function ciniki_artgallery_exhibitionSellerSummary($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'exhibition_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Market'),
         'customer_id'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Seller'),
         )); 
@@ -30,20 +30,20 @@ function ciniki_artgallery_exhibitionSellerSummary($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'private', 'checkAccess');
-    $rc = ciniki_artgallery_checkAccess($ciniki, $args['business_id'], 'ciniki.artgallery.exhibitionSellerSummary'); 
+    $rc = ciniki_artgallery_checkAccess($ciniki, $args['tnid'], 'ciniki.artgallery.exhibitionSellerSummary'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
     $modules = $rc['modules'];
 
     //
-    // Load the business intl settings
+    // Load the tenant intl settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -56,17 +56,17 @@ function ciniki_artgallery_exhibitionSellerSummary($ciniki) {
     $date_format = ciniki_users_dateFormat($ciniki);
 
     //
-    // Load business details
+    // Load tenant details
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'businessDetails');
-    $rc = ciniki_businesses_businessDetails($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'tenantDetails');
+    $rc = ciniki_tenants_tenantDetails($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
     if( isset($rc['details']) && is_array($rc['details']) ) {
-        $business_details = $rc['details'];
+        $tenant_details = $rc['details'];
     } else {
-        $business_details = array();
+        $tenant_details = array();
     }
 
     //
@@ -75,7 +75,7 @@ function ciniki_artgallery_exhibitionSellerSummary($ciniki) {
     $strsql = "SELECT name "
         . "FROM ciniki_artgallery_exhibitions "
         . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['exhibition_id']) . "' "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.artgallery', 'exhibition');
     if( $rc['stat'] != 'ok' ) {
@@ -103,15 +103,15 @@ function ciniki_artgallery_exhibitionSellerSummary($ciniki) {
         . "ciniki_artgallery_exhibition_items.fee_percent, "
         . "DATE_FORMAT(ciniki_artgallery_exhibition_items.sell_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS sell_date, "
         . "ciniki_artgallery_exhibition_items.sell_price, "
-        . "ciniki_artgallery_exhibition_items.business_fee, "
+        . "ciniki_artgallery_exhibition_items.tenant_fee, "
         . "ciniki_artgallery_exhibition_items.seller_amount "
         . "FROM ciniki_artgallery_exhibition_items "
         . "LEFT JOIN ciniki_customers ON ("
             . "ciniki_artgallery_exhibition_items.customer_id = ciniki_customers.id "
-            . "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . ") "
         . "WHERE ciniki_artgallery_exhibition_items.exhibition_id = '" . ciniki_core_dbQuote($ciniki, $args['exhibition_id']) . "' "
-        . "AND ciniki_artgallery_exhibition_items.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND ciniki_artgallery_exhibition_items.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     if( isset($args['customer_id']) && $args['customer_id'] != '' ) {
         $strsql .= "AND ciniki_artgallery_exhibition_items.customer_id = '" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "' ";
@@ -124,7 +124,7 @@ function ciniki_artgallery_exhibitionSellerSummary($ciniki) {
             'fields'=>array('id'=>'customer_id', 'display_name')),
         array('container'=>'items', 'fname'=>'item_id',
             'fields'=>array('id'=>'item_id', 'code', 'name', 'flags', 'medium', 'size', 'item_condition', 
-                'price', 'fee_percent', 'sell_date', 'sell_price', 'business_fee', 'seller_amount')),
+                'price', 'fee_percent', 'sell_date', 'sell_price', 'tenant_fee', 'seller_amount')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -142,9 +142,9 @@ function ciniki_artgallery_exhibitionSellerSummary($ciniki) {
     $today = new DateTime('now', new DateTimeZone($intl_timezone));
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'templates', 'sellersummary');
-    $rc = ciniki_artgallery_templates_sellersummary($ciniki, $args['business_id'], array(
+    $rc = ciniki_artgallery_templates_sellersummary($ciniki, $args['tnid'], array(
         'title'=>$exhibition_name,
-        'author'=>$business_details['name'],
+        'author'=>$tenant_details['name'],
         'footer'=>$today->format('M d, Y'),
         'sellers'=>$sellers,
         ));

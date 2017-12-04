@@ -43,7 +43,7 @@ function ciniki_artgallery_locations() {
                 var script = document.createElement("script");
                 script.id = 'googlemaps_js';
                 script.type = "text/javascript";
-                script.src = "https://maps.googleapis.com/maps/api/js?key=" + M.curBusiness.settings['googlemapsapikey'] + "&sensor=false&callback=M.ciniki_artgallery_locations.edit.lookupGoogleLatLong";
+                script.src = "https://maps.googleapis.com/maps/api/js?key=" + M.curTenant.settings['googlemapsapikey'] + "&sensor=false&callback=M.ciniki_artgallery_locations.edit.lookupGoogleLatLong";
                 document.body.appendChild(script);
             } else {
                 this.lookupGoogleLatLong();
@@ -68,7 +68,7 @@ function ciniki_artgallery_locations() {
             return '';
         };
         this.edit.fieldHistoryArgs = function(s, i) {
-            return {'method':'ciniki.artgallery.locationHistory','args':{'business_id':M.curBusinessID, 
+            return {'method':'ciniki.artgallery.locationHistory','args':{'tnid':M.curTenantID, 
                 'location_id':M.ciniki_artgallery_locations.edit.location_id, 'field':i}};
         };
         this.edit.addButton('save', 'Save', 'M.ciniki_artgallery_locations.locationSave();');
@@ -103,7 +103,7 @@ function ciniki_artgallery_locations() {
         } else {
             this.edit.sections._buttons.buttons.delete.visible = 'no';
         }
-        M.api.getJSONCb('ciniki.artgallery.locationGet', {'business_id':M.curBusinessID, 'location_id':this.edit.location_id}, function(rsp) {
+        M.api.getJSONCb('ciniki.artgallery.locationGet', {'tnid':M.curTenantID, 'location_id':this.edit.location_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -121,7 +121,7 @@ function ciniki_artgallery_locations() {
             var c = this.edit.serializeForm('no');
             if( c != '' ) {
                 var rsp = M.api.postJSONCb('ciniki.artgallery.locationUpdate', 
-                    {'business_id':M.curBusinessID, 'location_id':this.edit.location_id}, c, function(rsp) {
+                    {'tnid':M.curTenantID, 'location_id':this.edit.location_id}, c, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
                             return false;
@@ -135,7 +135,7 @@ function ciniki_artgallery_locations() {
             // Add contact
             var c = this.edit.serializeForm('yes');
             var rsp = M.api.postJSONCb('ciniki.artgallery.locationAdd', 
-                {'business_id':M.curBusinessID}, c, function(rsp) {
+                {'tnid':M.curTenantID}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -148,7 +148,7 @@ function ciniki_artgallery_locations() {
     this.locationDelete = function() {
         if( confirm("Are you sure you want to remove this location?") ) {
             var rsp = M.api.getJSONCb('ciniki.artgallery.locationDelete', 
-                {'business_id':M.curBusinessID, 'location_id':M.ciniki_artgallery_locations.edit.location_id}, function(rsp) {
+                {'tnid':M.curTenantID, 'location_id':M.ciniki_artgallery_locations.edit.location_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
