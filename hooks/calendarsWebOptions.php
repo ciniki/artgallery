@@ -29,6 +29,16 @@ function ciniki_artgallery_hooks_calendarsWebOptions(&$ciniki, $tnid, $args) {
 
     $options = array();
     $options[] = array(
+        'label'=>'Include Exhibitions',
+        'setting'=>'ciniki-artgallery-calendar-include',
+        'type'=>'toggle',
+        'value'=>(isset($settings['ciniki-artgallery-calendar-include'])?$settings['ciniki-artgallery-calendar-include']:'yes'),
+        'toggles'=>array(
+            array('value'=>'no', 'label'=>'No'),
+            array('value'=>'yes', 'label'=>'Yes'),
+            ),
+        );
+    $options[] = array(
         'label'=>'Exhibitions Title Prefix',
         'setting'=>'ciniki-artgallery-exhibition-prefix',
         'type'=>'text',

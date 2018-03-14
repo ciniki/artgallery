@@ -28,6 +28,13 @@ function ciniki_artgallery_web_calendarsWebItems($ciniki, $settings, $tnid, $arg
     }
 
     //
+    // Check if this modules items are to be included in the calendar
+    //
+    if( isset($settings['ciniki-artgallery-calendar-include']) && $settings['ciniki-artgallery-calendar-include'] == 'no' ) {
+        return array('stat'=>'ok');
+    }
+
+    //
     // Check if colours specified
     //
     $style = '';
