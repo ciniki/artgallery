@@ -13,7 +13,7 @@
 # permalink:            The permalink for the exhibition.
 # webflags:             The flags for displaying on the website.
 #
-#                       0x01 - Hidden, do not show on the website.
+#                           0x01 - Hidden, do not show on the website.
 #
 # start_date:           The start date of the exhibition
 # end_date:             The end date of the exhibition
