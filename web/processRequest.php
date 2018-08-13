@@ -222,9 +222,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
             // Add the links if they exist
             //
             if( isset($exhibition['links']) && count($exhibition['links']) > 0 ) {
-                if( isset($event['links']) && count($event['links']) > 0 ) {
-                    $page['blocks'][] = array('type'=>'links', 'section'=>'links', 'title'=>'', 'links'=>$exhibition['links']);
-                }
+                $page['blocks'][] = array('type'=>'links', 'section'=>'links', 'title'=>'', 'links'=>$exhibition['links']);
             }
 
             //
