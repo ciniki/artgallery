@@ -56,7 +56,7 @@ function ciniki_artgallery_web_webCollectionList($ciniki, $settings, $tnid, $arg
         $strsql .= "ORDER BY ciniki_artgallery_exhibitions.start_date ASC ";
     }
     if( isset($args['limit']) && $args['limit'] != '' && $args['limit'] > 0 && is_int($args['limit']) ) {
-        $strsql .= "LIMIT " . $args['limit'] . " ";
+        $strsql .= "LIMIT " . intval($args['limit']) . " ";
     }
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
