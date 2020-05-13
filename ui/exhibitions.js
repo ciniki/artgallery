@@ -78,6 +78,7 @@ function ciniki_artgallery_exhibitions() {
             }
         };
         this.menu.rowFn = function(s, i, d) { 
+            if( d == null ) { return ''; }
             if( s == 'exhibitions' || s == 'search' ) {
                 return 'M.ciniki_artgallery_exhibitions.showExhibition(\'M.ciniki_artgallery_exhibitions.showMenu();\',\'' + d.exhibition.id + '\');'; 
             } else if( s == 'categories' ) {
@@ -219,6 +220,7 @@ function ciniki_artgallery_exhibitions() {
             }
         };
         this.exhibition.rowFn = function(s, i, d) {
+            if( d == null ) { return ''; }
             if( s == 'links' ) {
                 return 'M.startApp(\'ciniki.artgallery.exhibitionlinks\',null,\'M.ciniki_artgallery_exhibitions.showExhibition();\',\'mc\',{\'exhibition_link_id\':\'' + d.link.id + '\'});';
             }

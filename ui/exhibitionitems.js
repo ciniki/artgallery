@@ -99,6 +99,7 @@ function ciniki_artgallery_exhibitionitems() {
             }
         };
         this.seller.rowFn = function(s, i, d) {
+            if( d == null ) { return ''; }
             if( s == 'items' ) {
                 return 'M.ciniki_artgallery_exhibitionitems.itemEdit(\'M.ciniki_artgallery_exhibitionitems.sellerShow();\',\'' + d.item.id + '\',0);';
             }
