@@ -62,7 +62,7 @@ function ciniki_artgallery_exhibitionimages() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_artgallery_exhibitionimages', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         }
 
@@ -134,15 +134,15 @@ function ciniki_artgallery_exhibitionimages() {
     };
 
     this.deleteImage = function() {
-        if( confirm('Are you sure you want to delete \'' + this.edit.data.name + '\'?') ) {
+        M.confirm('Are you sure you want to delete \'' + this.edit.data.name + '\'?',null,function() {
             var rsp = M.api.getJSONCb('ciniki.artgallery.exhibitionImageDelete', {'tnid':M.curTenantID, 
-                'exhibition_image_id':this.edit.exhibition_image_id}, function(rsp) {
+                'exhibition_image_id':M.ciniki_artgallery_exhibitionimages.edit.exhibition_image_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
                     }
                     M.ciniki_artgallery_exhibitionimages.edit.close();
                 });
-        }
+        });
     };
 }
