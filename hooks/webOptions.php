@@ -29,7 +29,7 @@ function ciniki_artgallery_hooks_webOptions(&$ciniki, $tnid, $args) {
     // Get the settings from the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
-    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_settings', 'tnid', $tnid, 'ciniki.web', 'settings', 'page-exhibitions');
+    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_settings', 'tnid', $tnid, 'ciniki.web', 'settings', 'page-artgalleryexhibitions');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -39,16 +39,16 @@ function ciniki_artgallery_hooks_webOptions(&$ciniki, $tnid, $args) {
         $settings = $rc['settings'];
     }
 
-
     $options = array();
     //
     // FIXME: Add settings
     //
-/*    $options[] = array(
+    $options[] = array(
         'label'=>'Image',
         'setting'=>'page-artgalleryexhibitions-image',
-        'type'=>'image',
-        'value'=>(isset($settings['page-artgalleryexhibitions-image'])?$settings['page-artgalleryexhibitions-image']:'yes'),
+        'type'=>'image_id',
+        'controls'=>'all',
+        'value'=>(isset($settings['page-artgalleryexhibitions-image'])?$settings['page-artgalleryexhibitions-image']:0),
     );
     $options[] = array(
         'label'=>'Caption',
@@ -61,7 +61,7 @@ function ciniki_artgallery_hooks_webOptions(&$ciniki, $tnid, $args) {
         'setting'=>'page-artgalleryexhibitions-content',
         'type'=>'textarea',
         'value'=>(isset($settings['page-artgalleryexhibitions-content'])?$settings['page-artgalleryexhibitions-content']:''),
-    ); */
+    );
 
 
     $pages['ciniki.artgallery'] = array('name'=>'Exhibitions', 'options'=>$options);
