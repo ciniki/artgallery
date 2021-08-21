@@ -254,13 +254,13 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
         //
         // Check to see if there is an introduction message to display
         //
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
-        $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_content', 'tnid', $tnid, 'ciniki.web', 'content', 'page-artgalleryexhibitions');
-        if( $rc['stat'] != 'ok' ) {
-            return $rc;
-        }
+//        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
+//        $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_content', 'tnid', $tnid, 'ciniki.web', 'content', 'page-artgalleryexhibitions');
+//        if( $rc['stat'] != 'ok' ) {
+//            return $rc;
+//        }
         $ciniki['response']['head']['og']['description'] = strip_tags('Upcoming Exhibitions');
-        if( $page_past_cur == 1 && isset($rc['content']['page-artgalleryexhibitions-content']) && $rc['content']['page-artgalleryexhibitions-content'] != '' ) {
+        if( $page_past_cur == 1 && isset($settings['page-artgalleryexhibitions-content']) && $settings['page-artgalleryexhibitions-content'] != '' ) {
             $page_content = '';
             if( isset($settings['page-artgalleryexhibitions-image']) 
                 && $settings['page-artgalleryexhibitions-image'] != '' 
@@ -271,7 +271,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
                     'captions'=>(isset($settings['page-artgalleryexhibitions-image-caption']) ? $settings['page-artgalleryexhibitions-image-caption'] : ''),
                     );
             }
-            $content = $rc['content']['page-artgalleryexhibitions-content'];
+            $content = $settings['page-artgalleryexhibitions-content'];
 
             //
             // Check if there is an application
