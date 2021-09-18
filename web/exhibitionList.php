@@ -95,7 +95,7 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, $args, 
     if( isset($args['offset']) && $args['offset'] > 0
         && isset($args['limit']) && $args['limit'] > 0 ) {
         $strsql .= "LIMIT " . intval($args['offset']) . ', ' . intval($args['limit']);
-    } elseif( $args['limit'] != '' && $args['limit'] > 0 && is_int($args['limit']) ) {
+    } elseif( isset($args['limit']) && $args['limit'] != '' && $args['limit'] > 0 && is_int($args['limit']) ) {
         $strsql .= "LIMIT " . intval($args['limit']) . " ";
     }
 
