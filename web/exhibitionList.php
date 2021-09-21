@@ -11,6 +11,7 @@
 //
 function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, $args, $format='') {
 
+    $strsql_count = "SELECT COUNT(ciniki_artgallery_exhibitions.id) ";
     $strsql = "SELECT ciniki_artgallery_exhibitions.id, "
         . "ciniki_artgallery_exhibitions.name, "
         . "";
@@ -19,6 +20,10 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, $args, 
     if( ($ciniki['tenant']['modules']['ciniki.artgallery']['flags']&0x01) > 0 ) {
         $strsql .= "ciniki_artgallery_locations.name AS location, ";
         $location_sql = "LEFT JOIN ciniki_artgallery_locations ON (" 
+            . "ciniki_artgallery_exhibitions.location_id = ciniki_artgallery_locations.id "
+            . "AND ciniki_artgallery_locations.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . ") ";
+        $strsql_count = "LEFT JOIN ciniki_artgallery_locations ON (" 
             . "ciniki_artgallery_exhibitions.location_id = ciniki_artgallery_locations.id "
             . "AND ciniki_artgallery_locations.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") ";
@@ -57,6 +62,16 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, $args, 
             . "AND ciniki_artgallery_exhibition_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $args['category']) . "' "
             . "AND ciniki_artgallery_exhibition_tags.tag_type = '10' "
             . "";
+        $strsql_count .= "FROM ciniki_artgallery_exhibition_tags "
+            . "LEFT JOIN ciniki_artgallery_exhibitions ON ("
+                . "ciniki_artgallery_exhibition_tags.exhibition_id = ciniki_artgallery_exhibitions.id "
+                . "AND ciniki_artgallery_exhibitions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+                . "AND (ciniki_artgallery_exhibitions.webflags&0x01) = 0 "
+                . ") "
+            . "WHERE ciniki_artgallery_exhibition_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . "AND ciniki_artgallery_exhibition_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $args['category']) . "' "
+            . "AND ciniki_artgallery_exhibition_tags.tag_type = '10' "
+            . "";
     } else {
         $strsql .= "FROM ciniki_artgallery_exhibitions "
             . $location_sql
@@ -64,6 +79,11 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, $args, 
                 . "ciniki_artgallery_exhibitions.id = ciniki_artgallery_exhibition_images.exhibition_id "
                 . "AND ciniki_artgallery_exhibition_images.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . ") "
+            . "WHERE ciniki_artgallery_exhibitions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            // Check the exhibition is visible on the website
+            . "AND (ciniki_artgallery_exhibitions.webflags&0x01) = 0 "
+            . "";
+        $strsql_count .= "FROM ciniki_artgallery_exhibitions "
             . "WHERE ciniki_artgallery_exhibitions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             // Check the exhibition is visible on the website
             . "AND (ciniki_artgallery_exhibitions.webflags&0x01) = 0 "
@@ -76,20 +96,34 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, $args, 
             . "GROUP BY ciniki_artgallery_exhibitions.id "
             . "ORDER BY ciniki_artgallery_exhibitions.start_date DESC, name "
             . "";
+        $strsql_count .= "AND ((ciniki_artgallery_exhibitions.end_date > ciniki_artgallery_exhibitions.start_date AND ciniki_artgallery_exhibitions.end_date < DATE(NOW())) "
+                . "OR (ciniki_artgallery_exhibitions.end_date < ciniki_artgallery_exhibitions.start_date AND ciniki_artgallery_exhibitions.start_date <= DATE(NOW())) "
+                . ") "
+            . "GROUP BY ciniki_artgallery_exhibitions.id "
+            . "";
     } elseif( isset($args['type']) && $args['type'] == 'current' ) {
         $strsql .= "AND (ciniki_artgallery_exhibitions.end_date >= DATE(NOW()) AND ciniki_artgallery_exhibitions.start_date <= DATE(NOW())) "
             . "GROUP BY ciniki_artgallery_exhibitions.id "
             . "ORDER BY ciniki_artgallery_exhibitions.start_date ASC, name "
+            . "";
+        $strsql_count .= "AND (ciniki_artgallery_exhibitions.end_date >= DATE(NOW()) AND ciniki_artgallery_exhibitions.start_date <= DATE(NOW())) "
+            . "GROUP BY ciniki_artgallery_exhibitions.id "
             . "";
     } elseif( isset($args['type']) && $args['type'] == 'upcoming' ) {
         $strsql .= "AND (ciniki_artgallery_exhibitions.start_date > DATE(NOW())) "
             . "GROUP BY ciniki_artgallery_exhibitions.id "
             . "ORDER BY ciniki_artgallery_exhibitions.start_date ASC, name "
             . "";
+        $strsql_count .= "AND (ciniki_artgallery_exhibitions.start_date > DATE(NOW())) "
+            . "GROUP BY ciniki_artgallery_exhibitions.id "
+            . "";
     } else {
         $strsql .= "AND (ciniki_artgallery_exhibitions.end_date >= DATE(NOW()) OR ciniki_artgallery_exhibitions.start_date >= DATE(NOW())) "
             . "GROUP BY ciniki_artgallery_exhibitions.id "
             . "ORDER BY ciniki_artgallery_exhibitions.start_date ASC, name "
+            . "";
+        $strsql .= "AND (ciniki_artgallery_exhibitions.end_date >= DATE(NOW()) OR ciniki_artgallery_exhibitions.start_date >= DATE(NOW())) "
+            . "GROUP BY ciniki_artgallery_exhibitions.id "
             . "";
     }
     if( isset($args['offset']) && $args['offset'] > 0
@@ -99,6 +133,19 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, $args, 
         $strsql .= "LIMIT " . intval($args['limit']) . " ";
     }
 
+    //
+    // Get the total number of exhibitions
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
+    $rc = ciniki_core_dbSingleCount($ciniki, $strsql_count, 'ciniki.artgallery', 'num');
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'customer.gibsoncentre.25', 'msg'=>'Unable to load get the number of items', 'err'=>$rc['err']));
+    }
+    $item_count = isset($rc['num']) ? $rc['num'] : 0;
+
+    //
+    // Get the exhibition list
+    //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
     $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
         array('container'=>'exhibitions', 'fname'=>'id', 'name'=>'exhibition',
@@ -113,6 +160,7 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, $args, 
     if( !isset($rc['exhibitions']) ) {
         return array('stat'=>'ok', 'exhibitions'=>array());
     }
-    return array('stat'=>'ok', 'exhibitions'=>$rc['exhibitions']);
+    
+    return array('stat'=>'ok', 'exhibitions'=>$rc['exhibitions'], 'num_exhibitions'=>$item_count);
 }
 ?>
