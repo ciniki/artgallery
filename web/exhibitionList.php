@@ -23,10 +23,6 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, $args, 
             . "ciniki_artgallery_exhibitions.location_id = ciniki_artgallery_locations.id "
             . "AND ciniki_artgallery_locations.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") ";
-        $strsql_count = "LEFT JOIN ciniki_artgallery_locations ON (" 
-            . "ciniki_artgallery_exhibitions.location_id = ciniki_artgallery_locations.id "
-            . "AND ciniki_artgallery_locations.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-            . ") ";
     } else {
         $strsql .= "ciniki_artgallery_exhibitions.location, ";
     }
