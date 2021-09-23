@@ -53,7 +53,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
     //
     $content = '';
     $page_content = '';
-    $page['title'] = 'Exhibitors';
+    //$page['title'] = 'Exhibitors';
     $ciniki['response']['head']['og']['url'] = $args['base_url']; // $ciniki['request']['domain_base_url'] . '/exhibitions';
 
     if( count($page['breadcrumbs']) == 0 ) {
