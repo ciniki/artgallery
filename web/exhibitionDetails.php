@@ -48,9 +48,9 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $tnid, $per
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.artgallery', array(
         array('container'=>'exhibitions', 'fname'=>'id', 
             'fields'=>array('id', 'name', 'location', 'location_id', 'permalink', 'image_id'=>'primary_image_id', 
-                'start_month', 'start_day', 'start_year', 'end_month', 'end_day', 'end_year',
+                'start_date', 'start_month', 'start_day', 'start_year', 'end_date', 'end_month', 'end_day', 'end_year',
                 'description'=>'long_description', 'short_description')),
-        array('container'=>'images', 'fname'=>'image_id', 
+        array('container'=>'images', 'fname'=>'image_permalink', 
             'fields'=>array('image_id', 'title'=>'image_name', 'permalink'=>'image_permalink',
                 'description'=>'image_description', 'short_description', 'sold'=>'image_sold', 'url'=>'image_url',
                 'last_updated'=>'image_last_updated')),
