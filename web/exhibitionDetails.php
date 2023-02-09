@@ -38,6 +38,7 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $tnid, $per
         . "LEFT JOIN ciniki_artgallery_exhibition_images ON ("
             . "ciniki_artgallery_exhibitions.id = ciniki_artgallery_exhibition_images.exhibition_id "
             . "AND (ciniki_artgallery_exhibition_images.webflags&0x01) = 0 "
+            . "AND ciniki_artgallery_exhibition_images.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
         . "WHERE ciniki_artgallery_exhibitions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_artgallery_exhibitions.permalink = '" . ciniki_core_dbQuote($ciniki, $permalink) . "' "

@@ -29,10 +29,6 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processContent');
 
-    if( isset($args['uri_split'][1]) && $args['uri_split'][1] == 'exhibitionapplication' ) {
-        array_shift($args['uri_split']);
-    }
-
     //
     // Check if a file was specified to be downloaded
     //
