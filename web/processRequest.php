@@ -20,12 +20,12 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
         return array('stat'=>'404', 'err'=>array('code'=>'ciniki.courses.80', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
     $page = array(
-        'title'=>$args['page_title'],
+        'title'=>(!isset($args['page_title']) || $args['page_title'] == '' ? 'Exhibitions' : $args['page_title']),
         'breadcrumbs'=>$args['breadcrumbs'],
         'blocks'=>array(),
         'submenu'=>array(),
         );
-    $page_title = isset($args['page_title']) ? $args['page_title'] : 'Exhibitions';
+    $page_title = (isset($args['page_title']) && $args['page_title'] != '' ? $args['page_title'] : 'Exhibitions');
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processContent');
 
@@ -368,7 +368,8 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
                 $page['blocks'][] = array(
                     'type' => 'content', 
                     'section' => 'exhibitions', 
-                    'title' => ($num_current > 0 ? 'Upcoming Exhibitions' : ''), 
+//                    'title' => ($num_current > 0 ? 'Upcoming Exhibitions' : ''), 
+                    'title' => 'Upcoming Exhibitions',
                     'html' => $rc['content']);
 //                $page_content .= $rc['content'];
             } else {
