@@ -142,14 +142,26 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, $args, 
     //
     // Get the exhibition list
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
-    $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
-        array('container'=>'exhibitions', 'fname'=>'id', 'name'=>'exhibition',
-            'fields'=>array('id', 'name', 'location', 'image_id'=>'primary_image_id', 
-                'start_date', 'start_month', 'start_day', 'start_year', 
-                'end_date', 'end_month', 'end_day', 'end_year', 
-                'permalink', 'description'=>'short_description', 'long_description', 'num_images')),
-        ));
+    if( isset($args['format']) && $args['format'] == 'tradingcards' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+        $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.artgallery', array(
+            array('container'=>'exhibitions', 'fname'=>'id', 
+                'fields'=>array('id', 'name', 'location', 'image_id'=>'primary_image_id', 
+                    'start_date', 'start_month', 'start_day', 'start_year', 
+                    'end_date', 'end_month', 'end_day', 'end_year', 
+                    'permalink', 'synopsis'=>'short_description', 'long_description', 'num_images',
+                    )),
+            ));
+    } else {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
+        $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.artgallery', array(
+            array('container'=>'exhibitions', 'fname'=>'id', 'name'=>'exhibition',
+                'fields'=>array('id', 'name', 'location', 'image_id'=>'primary_image_id', 
+                    'start_date', 'start_month', 'start_day', 'start_year', 
+                    'end_date', 'end_month', 'end_day', 'end_year', 
+                    'permalink', 'description'=>'short_description', 'long_description', 'num_images')),
+            ));
+    }
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }

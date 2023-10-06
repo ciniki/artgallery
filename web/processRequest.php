@@ -65,7 +65,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
     // The initial limit is how many to show on the exhibitions page after current and upcoming.  
     // This allows a shorter list in the initial page, and longer lists for the archive
     //
-    $page_past_initial_limit = 2;
+    $page_past_initial_limit = 10;
     $page_past_limit = 10;
     if( isset($settings['page-artgalleryexhibitions-initial-number']) 
         && $settings['page-artgalleryexhibitions-initial-number'] != ''
@@ -83,6 +83,32 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
         $page_past_cur = intval($ciniki['request']['args']['page']);
     } else {
         $page_past_cur = 1;
+    }
+
+    //
+    // Setup display format
+    //
+    $display_format = 'cilist';
+    if( isset($settings['page-artgalleryexhibitions-display-format']) && $settings['page-artgalleryexhibitions-display-format'] == 'imagelist' ) {
+        $display_format = 'imagelist';
+    } elseif( isset($settings['site-theme']) && $settings['site-theme'] == 'twentyone' ) {
+        if( isset($settings['page-artgalleryexhibitions-display-format']) && $settings['page-artgalleryexhibitions-display-format'] == 'tradingcards' ) {
+            $display_format = 'tradingcards';
+        } else {
+            $display_format = 'imagelist';
+        }
+    }
+
+    //
+    // Check for image format
+    //
+    $thumbnail_format = 'square-cropped';
+    $thumbnail_padding_color = '#ffffff';
+    if( isset($settings['page-artgalleryexhibitions-thumbnail-format']) && $settings['page-artgalleryexhibitions-thumbnail-format'] == 'square-padded' ) {
+        $thumbnail_format = $settings['page-artgalleryexhibitions-thumbnail-format'];
+        if( isset($settings['page-artgalleryexhibitions-thumbnail-padding-color']) && $settings['page-artgalleryexhibitions-thumbnail-padding-color'] != '' ) {
+            $thumbnail_padding_color = $settings['page-artgalleryexhibitions-thumbnail-padding-color'];
+        } 
     }
 
     //
@@ -240,7 +266,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
             //
             if( !isset($settings['page-exhibitions-share-buttons']) || $settings['page-exhibitions-share-buttons'] == 'yes' ) {
                 $tags = array('Exhibitions');
-                if( !isset($settings['page-events-share-buttons']) || $settings['page-events-share-buttons'] == 'yes' ) {
+                if( !isset($settings['page-exhibitions-share-buttons']) || $settings['page-exhibitions-share-buttons'] == 'yes' ) {
                     $tags = array();
                     $page['blocks'][] = array('type'=>'sharebuttons', 'section'=>'share', 'pagetitle'=>$page['title'], 'tags'=>$tags);
                 }
@@ -258,7 +284,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
     }
 
     //
-    // Display the list of exhibitors if a specific one isn't selected
+    // Display the list of exhibitions if a specific one isn't selected
     //
     else {
         //
@@ -347,7 +373,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
             //
             ciniki_core_loadMethod($ciniki, 'ciniki', 'artgallery', 'web', 'exhibitionList');
             $rc = ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, 
-                array('type'=>'upcoming', 'limit'=>0, 'category'=>$category));
+                array('type'=>'upcoming', 'limit'=>0, 'category'=>$category, 'format'=>$display_format));
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
@@ -358,20 +384,34 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
 //                . "";
 
             if( count($exhibitions) > 0 ) {
-                ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processExhibitions');
-                $rc = ciniki_web_processExhibitions($ciniki, $settings, $exhibitions, array(
-                    'base_url'=>$args['base_url'] . ($category!=''?'/category/'.$category:''),
-                    ));
-                if( $rc['stat'] != 'ok' ) {
-                    return $rc;
+                if( $display_format == 'tradingcards' ) {
+                    $page['blocks'][] = array(
+                        'type' => 'tradingcards',
+                        'section' => 'exhibitions',
+                        'title' => 'Upcoming Exhibitions',
+                        'noimage' => 'yes',
+                        'base_url' => $args['base_url'],
+                        'cards' => $exhibitions,
+                        'limit' => 0,
+                        'thumbnail_format' => $thumbnail_format,
+                        'thumbnail_padding_color' => $thumbnail_padding_color,
+                        'more-button' => 'yes',
+                        );
+                } else {
+                    ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processExhibitions');
+                    $rc = ciniki_web_processExhibitions($ciniki, $settings, $exhibitions, array(
+                        'base_url'=>$args['base_url'] . ($category!=''?'/category/'.$category:''),
+                        ));
+                    if( $rc['stat'] != 'ok' ) {
+                        return $rc;
+                    }
+                    $page['blocks'][] = array(
+                        'type' => 'content', 
+                        'section' => 'exhibitions', 
+                        'title' => 'Upcoming Exhibitions',
+                        'html' => $rc['content'],
+                        );
                 }
-                $page['blocks'][] = array(
-                    'type' => 'content', 
-                    'section' => 'exhibitions', 
-//                    'title' => ($num_current > 0 ? 'Upcoming Exhibitions' : ''), 
-                    'title' => 'Upcoming Exhibitions',
-                    'html' => $rc['content']);
-//                $page_content .= $rc['content'];
             } else {
                 $page['blocks'][] = array(
                     'type'=>'content', 
@@ -403,7 +443,9 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
                 array('type'=>'past', 
                     'category'=>$category,
                     'offset'=>$offset,
-                    'limit'=>($page_past_cur==1?($page_past_initial_limit+1):($page_past_limit+1))));
+                    'limit'=>($page_past_cur==1?($page_past_initial_limit+1):($page_past_limit+1)),
+                    'format'=>$display_format,
+                    ));
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
@@ -411,29 +453,50 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
             $num_exhibitions = $rc['num_exhibitions'];
     
             if( count($exhibitions) > 0 ) {
-                ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processExhibitions');
-                $rc = ciniki_web_processExhibitions($ciniki, $settings, $exhibitions, 
-                    array('page'=>$page_past_cur,
-                        'limit'=>($page_past_cur==1?$page_past_initial_limit:$page_past_limit), 
-                        'prev'=>'Newer Exhibitions &rarr;',
-                        'next'=>'&larr; Older Exhibitions',
-                        'base_url'=>$args['base_url'] . ($category!=''?'/category/'.$category:'')));
-                if( $rc['stat'] != 'ok' ) {
-                    return $rc;
-                }
-                $page['blocks'][] = array(
-                    'type' => 'content', 
-                    'section'=>'exhibitions',
-                    'title' => 'Past Exhibitions', 
-                    'html' => $rc['content'],
-                    );
-                if( $num_exhibitions > $page_past_limit ) {
+                if( $display_format == 'tradingcards' ) {
                     $page['blocks'][] = array(
-                        'type' => 'multipagenav', 
-                        'cur_page' => $page_past_cur,
-                        'total_pages' => ceil($num_exhibitions/$page_past_limit),
-                        'base_url'=>$args['base_url'] . ($category!=''?'/category/'.$category:''),
+                        'type' => 'tradingcards',
+                        'section' => 'exhibitions',
+                        'title' => 'Past Exhibitions',
+                        'noimage' => 'yes',
+                        'base_url' => $args['base_url'],
+                        'cards' => $exhibitions,
+                        'limit' => 0,
+                        'thumbnail_format' => $thumbnail_format,
+                        'thumbnail_padding_color' => $thumbnail_padding_color,
+                        'more-button' => 'yes',
                         );
+                    if( $num_exhibitions > $page_past_limit ) {
+                        $page['blocks'][] = array('type'=>'multipagenav', 
+                            'cur_page'=>$page_past_cur, 
+                            'total_pages'=>ceil($num_exhibitions/$page_past_limit),
+                            'base_url'=>$args['base_url']);
+                    }
+                } else {
+                    ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processExhibitions');
+                    $rc = ciniki_web_processExhibitions($ciniki, $settings, $exhibitions, 
+                        array('page'=>$page_past_cur,
+                            'limit'=>($page_past_cur==1?$page_past_initial_limit:$page_past_limit), 
+                            'prev'=>'Newer Exhibitions &rarr;',
+                            'next'=>'&larr; Older Exhibitions',
+                            'base_url'=>$args['base_url'] . ($category!=''?'/category/'.$category:'')));
+                    if( $rc['stat'] != 'ok' ) {
+                        return $rc;
+                    }
+                    $page['blocks'][] = array(
+                        'type' => 'content', 
+                        'section'=>'exhibitions',
+                        'title' => 'Past Exhibitions', 
+                        'html' => $rc['content'],
+                        );
+                    if( $num_exhibitions > $page_past_limit ) {
+                        $page['blocks'][] = array(
+                            'type' => 'multipagenav', 
+                            'cur_page' => $page_past_cur,
+                            'total_pages' => ceil($num_exhibitions/$page_past_limit),
+                            'base_url'=>$args['base_url'] . ($category!=''?'/category/'.$category:''),
+                            );
+                    }
                 }
             } else {
                 $page['blocks'][] = array('type'=>'content', 'title'=>'Past Exhibitions', 'content'=>'No past exhibitions');
