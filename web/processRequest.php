@@ -291,7 +291,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
         // Check to see if there is an introduction message to display
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
-        $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_content', 'tnid', $tnid, 'ciniki.web', 'content', 'page-artgalleryexhibitions');
+        $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_settings', 'tnid', $tnid, 'ciniki.web', 'content', 'page-artgalleryexhibitions');
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
