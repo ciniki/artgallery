@@ -287,6 +287,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
     // Display the list of exhibitions if a specific one isn't selected
     //
     else {
+error_log('test');
         //
         // Check to see if there is an introduction message to display
         //
@@ -295,12 +296,12 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
+            error_log(print_r($rc,true));
 
         $ciniki['response']['head']['og']['description'] = strip_tags('Upcoming Exhibitions');
-        if( $page_past_cur == 1 && isset($rc['content']['page-artgalleryexhibitions-content']) && $rc['content']['page-artgalleryexhibitions-content'] != '' ) {
+        if( $page_past_cur == 1 && isset($rc['content']['page-artgalleryexhibitions-application-details']) && $rc['content']['page-artgalleryexhibitions-application-details'] == 'yes' ) {
             $page_content = '';
             $content = $rc['content']['page-artgalleryexhibitions-content'];
-
             //
             // Check if there is an application
             //
