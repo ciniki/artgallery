@@ -299,7 +299,7 @@ function ciniki_artgallery_web_processRequest($ciniki, $settings, $tnid, $args) 
         $ciniki['response']['head']['og']['description'] = strip_tags('Upcoming Exhibitions');
         if( $page_past_cur == 1 && isset($rc['content']['page-artgalleryexhibitions-application-details']) && $rc['content']['page-artgalleryexhibitions-application-details'] == 'yes' ) {
             $page_content = '';
-            $content = $rc['content']['page-artgalleryexhibitions-content'];
+            $content = $rc['content']['page-artgalleryexhibitions-details'];
             //
             // Check if there is an application
             //
