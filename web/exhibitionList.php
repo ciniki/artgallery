@@ -166,7 +166,7 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, $args, 
         return $rc;
     }
     if( !isset($rc['exhibitions']) ) {
-        return array('stat'=>'ok', 'exhibitions'=>array());
+        return array('stat'=>'ok', 'exhibitions'=>array(), 'num_exhibitions'=>0);
     }
     
     return array('stat'=>'ok', 'exhibitions'=>$rc['exhibitions'], 'num_exhibitions'=>$item_count);
