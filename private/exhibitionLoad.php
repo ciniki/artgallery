@@ -191,6 +191,7 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $tnid, $exhibition_id, $args)
             . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_artgallery_exhibition_files.exhibition_id = '" . ciniki_core_dbQuote($ciniki, $args['exhibition_id']) . "' "
             . "";
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
         $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.exhibitions', array(
             array('container'=>'files', 'fname'=>'id', 'name'=>'file',
                 'fields'=>array('id', 'name', 'extension', 'permalink')),
