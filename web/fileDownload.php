@@ -13,6 +13,7 @@ function ciniki_artgallery_web_fileDownload($ciniki, $tnid, $permalink) {
     // Get the file details
     //
     $strsql = "SELECT ciniki_artgallery_files.id, "
+        . "ciniki_artgallery_files.uuid, "
         . "ciniki_artgallery_files.name, "
         . "ciniki_artgallery_files.extension, "
         . "ciniki_artgallery_files.binary_content "

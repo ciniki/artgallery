@@ -17,7 +17,7 @@
 // Returns
 // -------
 // <history>
-// <action user_id="2" date="May 12, 2012 10:54 PM" value="Event Name" age="2 months" user_display_name="Andrew" />
+// <action user_id="2" date="May 12, 2012 10:54 PM" value="Exhibition Name" age="2 months" user_display_name="Andrew" />
 // ...
 // </history>
 //

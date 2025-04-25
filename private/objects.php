@@ -58,6 +58,22 @@ function ciniki_artgallery_objects($ciniki) {
             ),
         'history_table'=>'ciniki_artgallery_history',
         );
+    $objects['exhibition_file'] = array(
+        'name'=>'File',
+        'sync'=>'yes',
+        'table'=>'ciniki_artgallery_exhibition_files',
+        'fields'=>array(
+            'exhibition_id'=>array('ref'=>'ciniki.artgallery.exhibition'),
+            'extension'=>array(),
+            'name'=>array(),
+            'permalink'=>array(),
+            'webflags'=>array(),
+            'description'=>array(),
+            'org_filename'=>array(),
+            'publish_date'=>array(),
+            ),
+        'history_table'=>'ciniki_artgallery_history',
+        );
     $objects['exhibition_item'] = array(
         'name'=>'Exhibition Item',
         'sync'=>'yes',

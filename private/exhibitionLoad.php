@@ -183,6 +183,27 @@ function ciniki_artgallery_exhibitionLoad($ciniki, $tnid, $exhibition_id, $args)
     }
 
     //
+    // Load links for exhibition if requested
+    //
+    if( isset($args['files']) && $args['files'] == 'yes' ) {
+        $strsql = "SELECT id, name, extension, permalink "
+            . "FROM ciniki_artgallery_exhibition_files "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . "AND ciniki_artgallery_exhibition_files.exhibition_id = '" . ciniki_core_dbQuote($ciniki, $args['exhibition_id']) . "' "
+            . "";
+        $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.exhibitions', array(
+            array('container'=>'files', 'fname'=>'id', 'name'=>'file',
+                'fields'=>array('id', 'name', 'extension', 'permalink')),
+        ));
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( isset($rc['files']) ) {
+            $rsp['exhibition']['files'] = $rc['files'];
+        }
+    }
+
+    //
     // Get the list of web collections, and which ones this exhibition is attached to
     //
     if( isset($args['webcollections']) && $args['webcollections'] == 'yes'

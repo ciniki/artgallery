@@ -23,6 +23,7 @@ function ciniki_artgallery_exhibitionGet($ciniki) {
         'exhibition_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Exhibition'),
         'images'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Images'),
         'links'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Links'),
+        'files'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Files'),
         'sellers'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sellers'),
         'inventory'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Inventory'),
         'locations'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Locations'),

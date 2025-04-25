@@ -12,10 +12,10 @@
 function ciniki_artgallery_web_calendarsWebItems($ciniki, $settings, $tnid, $args) {
 
     if( !isset($args['ltz_start']) || !is_a($args['ltz_start'], 'DateTime') ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.exhibitions.29', 'msg'=>'Invalid start date'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.58', 'msg'=>'Invalid start date'));
     }
     if( !isset($args['ltz_end']) || !is_a($args['ltz_end'], 'DateTime') ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.exhibitions.30', 'msg'=>'Invalid end date'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.59', 'msg'=>'Invalid end date'));
     }
 
     $sdt = $args['ltz_start'];

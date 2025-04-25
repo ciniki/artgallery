@@ -137,6 +137,25 @@ function ciniki_artgallery_web_exhibitionDetails($ciniki, $settings, $tnid, $per
         $exhibition['links'] = $rc['links'];
     }
 
+    //
+    // Load the files
+    //
+    $strsql = "SELECT id, name, extension, permalink "
+        . "FROM ciniki_artgallery_exhibition_files "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+        . "AND ciniki_artgallery_exhibition_files.exhibition_id = '" . ciniki_core_dbQuote($ciniki, $exhibition['id']) . "' "
+        . "";
+    $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.exhibitions', array(
+        array('container'=>'files', 'fname'=>'id', 'name'=>'file',
+            'fields'=>array('id', 'name', 'extension', 'permalink')),
+    ));
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( isset($rc['files']) ) {
+        $exhibition['files'] = $rc['files'];
+    }
+
     return array('stat'=>'ok', 'exhibition'=>$exhibition);
 }
 ?>

@@ -135,7 +135,7 @@ function ciniki_artgallery_web_exhibitionList($ciniki, $settings, $tnid, $args, 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
     $rc = ciniki_core_dbSingleCount($ciniki, $strsql_count, 'ciniki.artgallery', 'num');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'customer.gibsoncentre.25', 'msg'=>'Unable to load get the number of items', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.artgallery.57', 'msg'=>'Unable to load get the number of items', 'err'=>$rc['err']));
     }
     $item_count = isset($rc['num']) ? $rc['num'] : 0;
 
